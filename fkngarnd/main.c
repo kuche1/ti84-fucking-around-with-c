@@ -1,6 +1,9 @@
 
 // info
-//
+
+// https://taricorp.gitlab.io/83pa28d/lesson/week1/day03/index.html
+// registers: af, bc, de, hl, ix
+
 // the return value is to be stored in register `a` (tested with fnc that returns a char; not tested with fnc that takes any arguments)
 //
 // the first argument is stored in `a` (only tested with fnc that takes 1 char argument and does not return)
@@ -33,8 +36,29 @@ void reset_cur(){
 	set_cur_x(0);
 }
 
+void clear_screen() __naked{
+	__asm
+
+		push af
+		push bc
+		push de
+		push hl
+		push ix
+
+		abcall(_ClrScrnFull) // trash(all); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
+
+		pop ix
+		pop hl
+		pop de
+		pop bc
+		pop af
+
+		ret
+	__endasm;
+}
+
 void reset_screen(){
-	clearScreen(); // TODO check regs
+	clear_screen();
 	reset_cur();
 }
 
