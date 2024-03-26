@@ -11,8 +11,8 @@
 #include "../TiConstructor/lib/essentials.c"
 
 // AKO ZAKOMENTIRAM TIQ 2TA FAILA NE6TO STAVA I ELKATA KRA6VA
-#include "../TiConstructor/lib/textio.c"
-#include "../TiConstructor/lib/userinput.c"
+#include "../TiConstructor/lib/textio.c" // tova kato go zakomentiram i ne6tata po4vat da se usirat
+// #include "../TiConstructor/lib/userinput.c" // za sega izglejda kato tova da moga da go zakomentiram bez problemi
 
 // cursor get
 
