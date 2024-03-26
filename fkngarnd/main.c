@@ -26,8 +26,7 @@
 // #pragma disable_warning 59 // disable no return warning
 #pragma disable_warning 283 // disable: function declarator with no prototype
 
-// use bcall in asm
-#define abcall(__LABEL__) \
+#define BCALL(__LABEL__) \
     rst 40 \
     .dw __LABEL__
 
@@ -56,7 +55,7 @@ void printc(char ch) __naked{
 		push hl 
 		ld a, c
 		push ix
-		abcall(_VPutMap)
+		BCALL(_VPutMap)
 		pop ix
 		ret
 	__endasm;
@@ -137,7 +136,7 @@ void clear_screen() __naked{
 		push hl
 		push ix
 
-		abcall(_ClrScrnFull) // trash(all); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
+		BCALL(_ClrScrnFull) // trash(all); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
 
 		pop ix
 		pop hl
@@ -193,7 +192,7 @@ void new_line(){
 // void put_big_A() __naked{
 // 	__asm
 // 		ld a, #'A'
-// 		abcall(_PutC)
+// 		BCALL(_PutC)
 // 		ret
 // 	__endasm;
 // }
@@ -201,7 +200,7 @@ void new_line(){
 // void put_small_A() __naked{
 // 	__asm
 // 		ld a, #'A'
-// 		abcall(_VPutMap)
+// 		BCALL(_VPutMap)
 // 		ret
 // 	__endasm;
 // }
@@ -228,7 +227,7 @@ void put_char(char ch) __naked{
 		// add hl, sp
 		// // ld e, (hl) // tova raboti
 		// ld a, (hl) // tova ne raboti
-		abcall(_VPutMap) // in(A) trash(all but BC and HL) // https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
+		BCALL(_VPutMap) // in(A) trash(all but BC and HL) // https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
 
 		pop ix
 		pop hl
@@ -259,7 +258,7 @@ void put_str(char *str) __naked{
 
 		push hl
 
-		abcall(_VPutS) // in(HL); out(HL); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
+		BCALL(_VPutS) // in(HL); out(HL); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
 
 		pop hl;
 
@@ -300,7 +299,7 @@ char get_sk_blk() __naked{
 		push de
 		push hl
 
-		abcall(_getkey) // in(a); trash(bc, de, hl); https://taricorp.gitlab.io/83pa28d/lesson/week2/day12/index.html
+		BCALL(_getkey) // in(a); trash(bc, de, hl); https://taricorp.gitlab.io/83pa28d/lesson/week2/day12/index.html
 
 		pop hl
 		pop de
