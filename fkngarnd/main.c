@@ -428,7 +428,7 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 
 	char starting_x = get_cur_x();
 
-	char byte_start_xs[DISPLAY_WIDTH_PIXELS];
+	char byte_start_xs[DISPLAY_WIDTH_PIXELS]; // I have the fact that we have to loose about 100 bytes; oh well...
 
 	if(bytes_left <= 0){
 		PUT_COMPTIME_STR("<E0>");
