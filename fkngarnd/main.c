@@ -12,6 +12,9 @@
 
 // static variables don't seem to work
 
+// list of (all?) bcalls can be found here: https://wikiti.brandonw.net/index.php?title=Category:83Plus:BCALLs:By_Name
+// if u need to check for a specific hex code just change the last 4 digits of the following link: https://wikiti.brandonw.net/index.php?title=83Plus:RAM:8478
+
 // if your cursor has reached the end of the screen and you try to put a character, the cursor's position will actually stay the same instead of increasing, overflowing or saturating
 // tested with the X position of the cursor
 
