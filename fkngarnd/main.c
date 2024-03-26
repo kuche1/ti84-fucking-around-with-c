@@ -422,6 +422,8 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 	int bytes_left = arg_size_place_to_store;
 	int bytes_written = 0;
 
+	char starting_x = get_cur_x();
+
 	if(bytes_left <= 0){
 		PUT_COMPTIME_STR("<E0>");
 		return 0;
@@ -438,7 +440,14 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 		if(ch == '\n'){
 			break;
 		}else if(ch == CHAR_CLEAR){
-			clear_line();
+			char current_x = get_cur_x();
+			char pixels_to_clean = current_x - starting_x;
+			set_cur_x(starting_x);
+			for(int i=0; i<pixels_to_clean; ++i){ // TODO we can optimise this by using the space that is 4 pixels long
+				put_char(' ');
+			}
+			set_cur_x(starting_x);
+
 			storage = arg_place_to_store;
 			bytes_left = arg_size_place_to_store;
 			bytes_written = 0;
