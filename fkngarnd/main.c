@@ -26,7 +26,7 @@
 // #pragma disable_warning 59 // disable no return warning
 #pragma disable_warning 283 // disable: function declarator with no prototype
 
-// asm version of bcall
+// use bcall in asm
 #define abcall(__LABEL__) \
     rst 40 \
     .dw __LABEL__
