@@ -23,8 +23,7 @@
 
 //// TODO
 
-// make put_str take string length as argument
-// also make get_str return the length
+// empty
 
 //// CODE
 
@@ -34,10 +33,6 @@
 #pragma disable_warning 85 // disable parameter not used warning
 // #pragma disable_warning 59 // disable no return warning
 #pragma disable_warning 283 // disable: function declarator with no prototype
-
-#define BCALL(__LABEL__) \
-    rst 40 \
-    .dw __LABEL__
 
 // display params
 #define SYMBOL_HEIGHT_PIXELS 5
@@ -49,10 +44,24 @@
 // use some of the worthless ASCII codes
 #define CHAR_CLEAR 1
 
+// macro functions
+
+#define LENOF(var) \
+	sizeof(var) / sizeof(*var)
+
+#define BCALL(__LABEL__) \
+    rst 40 \
+    .dw __LABEL__
+
+#define PUT_COMPTIME_STR(str) \
+	{ \
+		put_str(str, LENOF(str)-1); /* `-1` as to discard the last 0 */ \
+	}
+
 // prototypes
 
 void put_char(char ch);
-void put_str(char *str);
+void put_str(char *str, int len);
 
 // magic - don't remove this or the code stops working; I don't know why
 
@@ -173,7 +182,8 @@ void clear_line(){
 	// for(int i=0; i<93; ++i){
 	// 	put_char(' ');
 	// }
-	put_str("                                                                                             "); // tova ne e prekaleno burzo
+
+	PUT_COMPTIME_STR("                                                                                             "); // this is not too fast...
 
 	set_cur_x(0);
 }
@@ -191,7 +201,9 @@ void new_line(){
 	// for(int i=0; i<20; ++i){
 	// 	put_char('^');
 	// }
-	put_str("^^^^^^^^^^^^^^^^^^^^^^^"); // tova ne e prekaleno burzo // it looks as if we can put one more `^` here, but we really can't
+
+	// it looks as if we can put one more `^` here, but we really can't
+	PUT_COMPTIME_STR("^^^^^^^^^^^^^^^^^^^^^^^") // this is not too fast
 
 	set_cur_y(original_line_y);
 	set_cur_x(0);
@@ -248,33 +260,36 @@ void put_char(char ch) __naked{
 	__endasm;
 }
 
-// outpu - any string
+// output - any string
 
-// we can use `_VPutS` instead - https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
 // if we want some safety we can implement maxlen
-// void put_str(char *str){
-// 	for(;;){
-// 		char c = *str++;
-// 		if(c==0){
-// 			break;
-// 		}
-// 		put_char(c);
-// 	}
-// }
-void put_str(char *str) __naked{
-	// kato vidq .asm i vijdam 4e argumenta se slaga v `hl`
+void put_str(char *str, int len){
+	if(len < 0){
+		PUT_COMPTIME_STR("<E1>");
+	}
 
-	__asm
+	char *end = str + len;
 
-		push hl
-
-		BCALL(_VPutS) // in(HL); out(HL); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
-
-		pop hl;
-
-		ret
-	__endasm;
+	while(str != end){
+		put_char(*str++);
+	}
 }
+
+// // tova mi se struva 4e ne e po-burzo ot C for versiqta
+// void put_str(char *str) __naked{
+// 	// kato vidq .asm i vijdam 4e argumenta se slaga v `hl`
+
+// 	__asm
+
+// 		push hl
+
+// 		BCALL(_VPutS) // in(HL); out(HL); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
+
+// 		pop hl;
+
+// 		ret
+// 	__endasm;
+// }
 
 // output - debug
 
@@ -354,7 +369,7 @@ char get_char_blk(){
 			return ' ';
 	}
 
-	put_str("<chr");
+	PUT_COMPTIME_STR("<chr");
 	put_char_as_num(ch);
 	put_char('>');
 	
@@ -363,18 +378,19 @@ char get_char_blk(){
 
 // input - string
 
-void get_str(char *arg_place_to_store, int arg_size_place_to_store){
+int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 	char *storage = arg_place_to_store;
 	int bytes_left = arg_size_place_to_store;
+	int bytes_written = 0;
 
 	if(bytes_left <= 0){
-		put_str("<E0>");
-		return;
+		PUT_COMPTIME_STR("<E0>");
+		return 0;
 	}
 
 	for(;;){
 		if(bytes_left <= 1){
-			put_str("<mem>");
+			PUT_COMPTIME_STR("<mem>");
 			break;
 		}
 
@@ -386,6 +402,7 @@ void get_str(char *arg_place_to_store, int arg_size_place_to_store){
 			clear_line();
 			storage = arg_place_to_store;
 			bytes_left = arg_size_place_to_store;
+			bytes_written = 0;
 			continue;
 		}
 		
@@ -407,11 +424,14 @@ void get_str(char *arg_place_to_store, int arg_size_place_to_store){
 
 		*storage++ = ch;
 		bytes_left -= 1;
+		bytes_written += 1;
 	}
 
 	*storage = 0;
 
 	new_line();
+
+	return bytes_written;
 }
 
 // return test
@@ -453,7 +473,7 @@ void main() {
 	put_char('D');
 	put_char('E');
 	new_line();
-	put_str("q6 mi huq");
+	PUT_COMPTIME_STR("q6 mi huq");
 	new_line();
 
 	// for(int i=0; i<35; ++i){
@@ -461,10 +481,10 @@ void main() {
 	// }
 	// new_line();
 
-	put_str("return test");
+	PUT_COMPTIME_STR("return test");
 	new_line();
 	char ret_value = ret_test();
-	put_str("asd value: ");
+	PUT_COMPTIME_STR("asd value: ");
 	put_char(ret_value);
 	new_line();
 
@@ -485,12 +505,12 @@ void main() {
 	// }
 
 	char inp[35] = "";
-	get_str(inp, 35);
+	int written = get_str(inp, 35); // TODO trqbva da napravq GET_COMPTIME_STR ili ne6to takova (ili prosto GET_STR za6toto storage-a vinagi 6te e known at comptime)
 
-	put_str("input:");
-	put_str(inp);
+	PUT_COMPTIME_STR("input:");
+	put_str(inp, written);
 	new_line();
 
-	put_str("BYE");
+	PUT_COMPTIME_STR("BYE");
 
 }
