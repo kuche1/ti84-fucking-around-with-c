@@ -49,6 +49,9 @@
 #define DISPLAY_HEIGHT_PIXELS 64 // indexed 0-63
 #define DISPLAY_WIDTH_PIXELS 96 // indexed 0-95
 
+#define ASCII_SPACE_1PX ' '
+#define ASCII_SPACE_4PX 0x06
+
 // use some of the worthless ASCII codes
 #define CHAR_CLEAR 1
 #define CHAR_BACKSPACE 2
@@ -230,7 +233,7 @@ void clear_line(){
 	set_cur_x(0);
 
 	for(char i=0; i+=4; i<DISPLAY_WIDTH_PIXELS){
-		put_char(0x06); // fat 4 pixel wide space
+		put_char(ASCII_SPACE_4PX);
 	}
 
 	set_cur_x(0);
@@ -238,8 +241,7 @@ void clear_line(){
 
 void new_line(){
 	set_cur_x(0);
-	// PUT_COMPTIME_STR("   "); // enogh to wipe the `>` - https://taricorp.gitlab.io/83pa28d/appendix/sfont/index.html
-	put_char(0x06); // see https://taricorp.gitlab.io/83pa28d/appendix/sfont/index.html
+	put_char(ASCII_SPACE_4PX);
 
 	move_cur_to_next_line();
 	clear_line(); // tova ne e prekaleno burzo
@@ -449,8 +451,8 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 			char current_x = get_cur_x();
 			char pixels_to_clean = current_x - starting_x;
 			set_cur_x(starting_x);
-			for(char i=0; i<pixels_to_clean; ++i){ // TODO we can optimise this by using the space that is 4 pixels long
-				put_char(' ');
+			for(char i=0; i<pixels_to_clean; i+=4){
+				put_char(ASCII_SPACE_4PX);
 			}
 			set_cur_x(starting_x);
 
@@ -468,7 +470,7 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 
 			char start_x = byte_start_xs[bytes_written];
 			set_cur_x(start_x);
-			put_char(0x06); // this fat space is 4 pixels wide; it will actually not clear all possible characters (there are some niche 5px chars), but we'll close our eyes for now
+			put_char(ASCII_SPACE_4PX); // not possible characters will be cleared (there are some niche 5px chars), but we'll close our eyes for now
 			set_cur_x(start_x);
 			continue;
 		}
