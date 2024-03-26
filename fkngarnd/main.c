@@ -19,8 +19,19 @@
 
 //// CODE
 
-#include "../TiConstructor/lib/essentials.c"
+#include "ti83plus.h"
 
+// config compiler
+#pragma disable_warning 85 // disable parameter not used warning
+// #pragma disable_warning 59 // disable no return warning
+#pragma disable_warning 283 // disable: function declarator with no prototype
+
+// asm version of bcall
+#define abcall(__LABEL__) \
+    rst 40 \
+    .dw __LABEL__
+
+// display params
 #define SYMBOL_HEIGHT_PIXELS 5
 // different symbols have different width; we can change this if we make a wrapper around the put_char fnc that checks for the cursor x
 #define DISPLAY_HEIGHT_PIXELS 63
