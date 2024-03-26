@@ -13,7 +13,7 @@
 
 #include "../TiConstructor/lib/essentials.c"
 #include "../TiConstructor/lib/textio.c"
-#include "../TiConstructor/lib/userinput.c"
+// #include "../TiConstructor/lib/userinput.c"
 
 // screen, cursor
 
