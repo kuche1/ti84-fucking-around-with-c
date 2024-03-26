@@ -12,6 +12,15 @@
 
 // static variables don't seem to work
 
+// if your cursor has reached the end of the screen and you try to put a character, the cursor's position will actually stay the same instead of increasing, overflowing or saturating
+// tested with the X position of the cursor
+
+//// CONVENTIONS
+
+// if we are to signify any "warning" we do it by printing `<TEXT>`, where `TEXT` is the actual text of the warning
+
+// if we are to signify a runtime error we do it by printing `<EN>`, where `N` is replaced by a unique number (so that there isn't one `N` used for multiple errors found on multiple lines in the source code)
+
 //// TODO
 
 // make put_str take string length as argument
@@ -33,8 +42,9 @@
 // display params
 #define SYMBOL_HEIGHT_PIXELS 5
 // different symbols have different width; we can change this if we make a wrapper around the put_char fnc that checks for the cursor x
-#define DISPLAY_HEIGHT_PIXELS 63
-#define DISPLAY_WIDTH_PIXELS 95
+#define FATTEST_SYMBOL_WIDTH_PIXELS 4 // I actually don't know if this is the case; currently `Y` with 4 pixels
+#define DISPLAY_HEIGHT_PIXELS 64 // indexed 0-63
+#define DISPLAY_WIDTH_PIXELS 96 // indexed 0-95
 
 // use some of the worthless ASCII codes
 #define CHAR_CLEAR 1
@@ -181,7 +191,7 @@ void new_line(){
 	// for(int i=0; i<20; ++i){
 	// 	put_char('^');
 	// }
-	put_str("^^^^^^^^^^^^^^^^^^^^^^^"); // tova ne e prekaleno burzo
+	put_str("^^^^^^^^^^^^^^^^^^^^^^^"); // tova ne e prekaleno burzo // it looks as if we can put one more `^` here, but we really can't
 
 	set_cur_y(original_line_y);
 	set_cur_x(0);
@@ -340,9 +350,11 @@ char get_char_blk(){
 			return '*';
 		case 131:
 			return '/';
+		case 153:
+			return ' ';
 	}
 
-	put_char('<');
+	put_str("<chr");
 	put_char_as_num(ch);
 	put_char('>');
 	
@@ -356,28 +368,45 @@ void get_str(char *arg_place_to_store, int arg_size_place_to_store){
 	int bytes_left = arg_size_place_to_store;
 
 	if(bytes_left <= 0){
+		put_str("<E0>");
 		return;
 	}
 
-	while(bytes_left > 1){
+	for(;;){
+		if(bytes_left <= 1){
+			put_str("<mem>");
+			break;
+		}
 
 		char ch = get_char_blk();
 
 		if(ch == '\n'){
 			break;
-		}
-
-		if(ch == CHAR_CLEAR){
+		}else if(ch == CHAR_CLEAR){
 			clear_line();
 			storage = arg_place_to_store;
 			bytes_left = arg_size_place_to_store;
 			continue;
 		}
+		
+		put_char(ch);
+
+		char cur_x = get_cur_x();
+		char cur_y = get_cur_y();
+
+		set_cur_y(0);
+		clear_line();
+		put_char_as_num(cur_x);
+		set_cur_y(cur_y);
+		set_cur_x(cur_x);
+
+		if(cur_x >= DISPLAY_WIDTH_PIXELS - FATTEST_SYMBOL_WIDTH_PIXELS - 1){ // we actually need to leave some headroom here because the cursor will not saturate or overflow when the end has been reched - instead it will stay the same
+			// no more space on screen
+			break;
+		}
 
 		*storage++ = ch;
 		bytes_left -= 1;
-
-		put_char(ch);
 	}
 
 	*storage = 0;
@@ -404,6 +433,19 @@ char ret_test() __naked{
 void main() {
 	reset_screen();
 
+	{
+		char x0 = get_cur_x();
+		put_char('S');
+		char x1 = get_cur_x();
+
+		put_char(' ');
+		put_char_as_num(x0);
+		put_char(' ');
+		put_char_as_num(x1);
+
+		new_line();
+	}
+
 	put_char('A');
 	new_line();
 	put_char('B');
@@ -414,14 +456,10 @@ void main() {
 	put_str("q6 mi huq");
 	new_line();
 
-	for(int i=0; i<35; ++i){
-		put_char('a');
-	}
-	// set_cur_x(0);
-	// for(int i=0; i<93; ++i){
-	// 	put_char(' ');
+	// for(int i=0; i<35; ++i){
+	// 	put_char('a');
 	// }
-	new_line();
+	// new_line();
 
 	put_str("return test");
 	new_line();
@@ -446,8 +484,8 @@ void main() {
 	// 	put_char_as_num(cur_y);
 	// }
 
-	char inp[20] = "";
-	get_str(inp, 20);
+	char inp[35] = "";
+	get_str(inp, 35);
 
 	put_str("input:");
 	put_str(inp);
