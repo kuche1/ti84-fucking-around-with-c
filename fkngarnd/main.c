@@ -340,10 +340,11 @@ void put_str(char *str, int len){
 void put_char_as_num(char ch){
 	// doing recursion on cuch a shitty hardware is risky... I'll use something else if I ever crash
 
-	if(ch < 0){
-		put_char('-');
-		return put_char_as_num(ch*-1);
-	}
+	// this will never happen since char in an unsigned type
+	// if(ch < 0){
+	// 	put_char('-');
+	// 	return put_char_as_num(ch*-1);
+	// }
 
 	char last_digit = ch % 10;
 	ch /= 10;
