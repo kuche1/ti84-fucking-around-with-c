@@ -232,7 +232,7 @@ void clear_line(){
 	set_cur_x(0);
 }
 
-void new_line(char id){
+void new_line(){
 	// TODO tova koeto izpolzvame za indikaciq na reda e super bavno
 	// trqbva da izmislq ne6to po-umno
 
