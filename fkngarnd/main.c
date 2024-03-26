@@ -1,4 +1,10 @@
 
+// info
+//
+// the return value is to be stored in register `a` (not tested with fnc that takes any arguments)
+//
+// the first argument is stored in `a` (only tested with fnc that takes 1 argument and does not return)
+
 #define USE_GETKEY
 #define USE_HEXDUMP
 
@@ -130,6 +136,7 @@ void put_char_as_num(char ch){
 
 // input - scan code
 
+// returns keycode of pressed key (0 is for the ON button)
 // for a nonblocking version we could use `_GetCSC` - https://taricorp.gitlab.io/83pa28d/lesson/week2/day12/index.html
 char get_sk_blk() __naked{
 	__asm
@@ -138,13 +145,11 @@ char get_sk_blk() __naked{
 		push de
 		push hl
 
-		abcall(_getkey)
+		abcall(_getkey) // in(a); trash(bc, de, hl); https://taricorp.gitlab.io/83pa28d/lesson/week2/day12/index.html
 
 		pop hl
 		pop de
 		pop bc
-
-		// value is already stored in the return register (`a`) so we should be good to go
 
 		ret
 	__endasm;
