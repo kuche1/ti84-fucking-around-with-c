@@ -225,13 +225,6 @@ void reset_screen(){
 void clear_line(){
 	set_cur_x(0);
 
-	// for(int i=0; i<93; ++i){
-	// 	put_char(' ');
-	// }
-
-	// TODO we can optimise this by using the space that is 4 pixels instead (this one is 1 pixel)
-	// PUT_COMPTIME_STR("                                                                                             "); // this is not too fast...
-
 	for(char i=0; i+=4; i<DISPLAY_WIDTH_PIXELS){
 		put_char(0x06); // fat 4 pixel wide space
 	}
