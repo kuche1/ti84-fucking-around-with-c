@@ -9,38 +9,40 @@
 // the first argument is stored in `a` (only tested with fnc that takes 1 char argument and does not return)
 
 #include "../TiConstructor/lib/essentials.c"
-// #include "../TiConstructor/lib/textio.c"
-// #include "../TiConstructor/lib/userinput.c"
+
+// AKO ZAKOMENTIRAM TIQ 2TA FAILA NE6TO STAVA I ELKATA KRA6VA
+#include "../TiConstructor/lib/textio.c"
+#include "../TiConstructor/lib/userinput.c"
 
 // screen, cursor
 
-// void set_cur_y(char y) __naked{
-// 	__asm
-// 		ld (#penCol), a
-// 		ret
-// 	__endasm;
-// }
-
-// void set_cur_x(char x) __naked{
-// 	__asm
-// 		ld (#penRow), a
-// 		ret
-// 	__endasm;
-// }
-
-// void reset_cur(){
-// 	set_cur_y(0);
-// 	set_cur_x(0);
-// }
-
-void reset_cur() __naked{
+void set_cur_y(char y) __naked{
 	__asm
-		xor a, a
-		ld (#penRow), a
 		ld (#penCol), a
 		ret
 	__endasm;
 }
+
+void set_cur_x(char x) __naked{
+	__asm
+		ld (#penRow), a
+		ret
+	__endasm;
+}
+
+void reset_cur(){
+	set_cur_y(0);
+	set_cur_x(0);
+}
+
+// void reset_cur() __naked{
+// 	__asm
+// 		xor a, a
+// 		ld (#penRow), a
+// 		ld (#penCol), a
+// 		ret
+// 	__endasm;
+// }
 
 void clear_screen() __naked{
 	__asm
