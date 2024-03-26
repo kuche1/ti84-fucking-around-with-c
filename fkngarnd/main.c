@@ -8,32 +8,38 @@
 //
 // the first argument is stored in `a` (only tested with fnc that takes 1 char argument and does not return)
 
-#define USE_GETKEY
-#define USE_HEXDUMP
-
 #include "../TiConstructor/lib/essentials.c"
-#include "../TiConstructor/lib/textio.c"
+// #include "../TiConstructor/lib/textio.c"
 // #include "../TiConstructor/lib/userinput.c"
 
 // screen, cursor
 
-void set_cur_y(char y) __naked{
+// void set_cur_y(char y) __naked{
+// 	__asm
+// 		ld (#penCol), a
+// 		ret
+// 	__endasm;
+// }
+
+// void set_cur_x(char x) __naked{
+// 	__asm
+// 		ld (#penRow), a
+// 		ret
+// 	__endasm;
+// }
+
+// void reset_cur(){
+// 	set_cur_y(0);
+// 	set_cur_x(0);
+// }
+
+void reset_cur() __naked{
 	__asm
+		xor a, a
+		ld (#penRow), a
 		ld (#penCol), a
 		ret
 	__endasm;
-}
-
-void set_cur_x(char x) __naked{
-	__asm
-		ld (#penRow), a
-		ret
-	__endasm;
-}
-
-void reset_cur(){
-	set_cur_y(0);
-	set_cur_x(0);
 }
 
 void clear_screen() __naked{
@@ -82,18 +88,19 @@ void reset_screen(){
 
 // output - new line
 
-// void newline() __naked{
-// 	__asm
-// 		ld a, (#penRow)
-// 		ld b, #6
-// 		add b
-// 		ld (#penRow), a
+// TODO tova trqbva da e na C ne na asm
+void new_line() __naked{
+	__asm
+		ld a, (#penRow)
+		ld b, #6
+		add b
+		ld (#penRow), a
 
-// 		xor a, a
-// 		ld (#penCol), a
-// 		ret
-// 	__endasm;
-// }
+		xor a, a
+		ld (#penCol), a
+		ret
+	__endasm;
+}
 
 // output - any letter
 
@@ -236,32 +243,32 @@ void main() {
 	reset_screen();
 
 	put_char('A');
-	newline();
+	new_line();
 	put_char('B');
 	put_char('C');
 	put_char('D');
 	put_char('E');
-	newline();
+	new_line();
 	put_str("q6 mi huq");
-	newline();
+	new_line();
 
 	for(int i=0; i<30; ++i){
 		put_char('a');
 	}
-	newline();
+	new_line();
 
 	put_str("return test");
-	newline();
+	new_line();
 	char ret_value = ret_test();
 	put_str("asd value: ");
 	put_char(ret_value);
-	newline();
+	new_line();
 
 	// put_str("enter key: ");
 	// char ch = get_char_blk();
 	// put_char(ch);
 	for(int count=0;; count += 1){
-		newline();
+		new_line();
 		char ch = get_char_blk();
 		if(ch == 'A'){
 			break;
