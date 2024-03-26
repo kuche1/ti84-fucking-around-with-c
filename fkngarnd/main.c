@@ -136,13 +136,17 @@ void clear_line(){
 
 void new_line(){
 	move_cur_to_next_line();
-
 	clear_line();
 
-	char line_id = 'A';
-	put_char(line_id);
-	line_id += 1;
-	put_char(':');
+	int original_line_y = get_cur_y();
+
+	move_cur_to_next_line();
+	for(int i=0; i<20; ++i){ // TODO tova e giga bavno
+		put_char('^');
+	}
+
+	set_cur_y(original_line_y);
+	set_cur_x(0);
 }
 
 // output - hardcoded letters
