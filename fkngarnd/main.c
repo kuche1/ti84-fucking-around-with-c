@@ -14,6 +14,11 @@
 #include "../TiConstructor/lib/textio.c" // tova kato go zakomentiram i ne6tata po4vat da se usirat
 // #include "../TiConstructor/lib/userinput.c" // za sega izglejda kato tova da moga da go zakomentiram bez problemi
 
+#define SYMBOL_HEIGHT_PIXELS 5
+// different symbols have different width; we can change this if we make a wrapper around the put_char fnc that checks for the cursor x
+#define DISPLAY_HEIGHT_PIXELS 63
+#define DISPLAY_WIDTH_PIXELS 95
+
 // cursor get
 
 char get_cur_y() __naked{
@@ -96,7 +101,13 @@ void reset_screen(){
 
 void new_line(){
 	char y = get_cur_y();
-	y += 6;
+
+	y += SYMBOL_HEIGHT_PIXELS + 1; // +1 so that letters are not glued togethere
+
+	if(y + SYMBOL_HEIGHT_PIXELS > DISPLAY_HEIGHT_PIXELS){ // `+ SYMBOL_HEIGHT_PIXELS` so that we know there is enough screen space for the next symbol
+		y = 0;
+	}
+
 	set_cur_y(y);
 
 	set_cur_x(0);
@@ -305,10 +316,15 @@ void main() {
 			break;
 		}
 		put_char(ch);
-		if(count % 3 == 0){
-			test123();
-			put_str("called test123");
-		}
+
+		put_char(' ');
+		int cur_y = get_cur_y();
+		put_char_as_num(cur_y);
+
+		// if(count % 3 == 0){
+		// 	test123();
+		// 	put_str("called test123");
+		// }
 	}
 
 	// char ch = get_key_blk();
