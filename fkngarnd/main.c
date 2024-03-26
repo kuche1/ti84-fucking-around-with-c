@@ -295,15 +295,6 @@ char ret_test() __naked{
 
 // main
 
-void test123() __naked{
-	__asm
-		ld a, #0
-		ld (#penCol), a
-		ld (#penRow), a
-		ret
-	__endasm;
-}
-
 void main() {
 	reset_screen();
 
