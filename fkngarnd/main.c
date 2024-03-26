@@ -76,7 +76,7 @@ void put_small_char(char ch) __naked{
 		ld hl, #0
 		add hl, sp
 		ld e, (hl)
-		abcall(_VPutMap)
+		abcall(_VPutMap) // https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
 
 		pop de
 		pop hl
