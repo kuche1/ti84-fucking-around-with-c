@@ -14,7 +14,7 @@
 #include "../TiConstructor/lib/textio.c"
 #include "../TiConstructor/lib/userinput.c"
 
-// cursor - get
+// cursor get
 
 char get_cur_y() __naked{
 	__asm
@@ -30,7 +30,7 @@ char get_cur_x() __naked{
 	__endasm;
 }
 
-// cursor - set
+// cursor set
 
 void set_cur_y(char y) __naked{
 	__asm
@@ -62,6 +62,8 @@ void reset_cur(){
 // 	__endasm;
 // }
 
+// screen clear
+
 void clear_screen() __naked{
 	__asm
 
@@ -83,28 +85,12 @@ void clear_screen() __naked{
 	__endasm;
 }
 
+// screen reset
+
 void reset_screen(){
 	clear_screen();
 	reset_cur();
 }
-
-// output - hardcoded letters
-
-// void put_big_A() __naked{
-// 	__asm
-// 		ld a, #'A'
-// 		abcall(_PutC)
-// 		ret
-// 	__endasm;
-// }
-
-// void put_small_A() __naked{
-// 	__asm
-// 		ld a, #'A'
-// 		abcall(_VPutMap)
-// 		ret
-// 	__endasm;
-// }
 
 // output - new line
 
@@ -125,6 +111,24 @@ void new_line(){
 
 // 		xor a, a
 // 		ld (#penCol), a
+// 		ret
+// 	__endasm;
+// }
+
+// output - hardcoded letters
+
+// void put_big_A() __naked{
+// 	__asm
+// 		ld a, #'A'
+// 		abcall(_PutC)
+// 		ret
+// 	__endasm;
+// }
+
+// void put_small_A() __naked{
+// 	__asm
+// 		ld a, #'A'
+// 		abcall(_VPutMap)
 // 		ret
 // 	__endasm;
 // }
