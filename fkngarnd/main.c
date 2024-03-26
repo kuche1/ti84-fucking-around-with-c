@@ -14,21 +14,39 @@
 #include "../TiConstructor/lib/textio.c"
 #include "../TiConstructor/lib/userinput.c"
 
-// screen, cursor
+// cursor - get
+
+char get_cur_y() __naked{
+	__asm
+		ld a, (#penRow)
+		ret
+	__endasm;
+}
+
+char get_cur_x() __naked{
+	__asm
+		ld a, (#penCol)
+		ret
+	__endasm;
+}
+
+// cursor - set
 
 void set_cur_y(char y) __naked{
 	__asm
-		ld (#penCol), a
+		ld (#penRow), a
 		ret
 	__endasm;
 }
 
 void set_cur_x(char x) __naked{
 	__asm
-		ld (#penRow), a
+		ld (#penCol), a
 		ret
 	__endasm;
 }
+
+// cursor reset
 
 void reset_cur(){
 	set_cur_y(0);
@@ -90,19 +108,26 @@ void reset_screen(){
 
 // output - new line
 
-// TODO tova trqbva da e na C ne na asm
-void new_line() __naked{
-	__asm
-		ld a, (#penRow)
-		ld b, #6
-		add b
-		ld (#penRow), a
+void new_line(){
+	char y = get_cur_y();
+	y += 6;
+	set_cur_y(y);
 
-		xor a, a
-		ld (#penCol), a
-		ret
-	__endasm;
+	set_cur_x(0);
 }
+
+// void new_line() __naked{
+// 	__asm
+// 		ld a, (#penRow)
+// 		ld b, #6
+// 		add b
+// 		ld (#penRow), a
+
+// 		xor a, a
+// 		ld (#penCol), a
+// 		ret
+// 	__endasm;
+// }
 
 // output - any letter
 
