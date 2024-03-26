@@ -144,6 +144,9 @@ void clear_line(){
 }
 
 void new_line(){
+	// TODO tova koeto izpolzvame za indikaciq na reda e super bavno
+	// trqbva da izmislq ne6to po-umno
+
 	move_cur_to_next_line();
 	clear_line(); // tova ne e prekaleno burzo
 
