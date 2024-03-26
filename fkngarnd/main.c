@@ -7,6 +7,8 @@
 // the return value is to be stored in register `a` (tested with fnc that returns a char; not tested with fnc that takes any arguments)
 //
 // the first argument is stored in `a` (only tested with fnc that takes 1 char argument and does not return)
+//
+// argumenta na funkciq koqto iziskva edin string pointer i nqma return idva v `hl`
 
 // static variables don't seem to work
 
@@ -24,6 +26,7 @@
 // prototypes
 
 void put_char(char ch);
+void put_str(char *str);
 
 // cursor get
 
@@ -126,24 +129,25 @@ void clear_line(){
 
 	set_cur_x(0);
 
-	// TODO tova e giga bavno
-	for(int i=0; i<93; ++i){
-		put_char(' ');
-	}
+	// for(int i=0; i<93; ++i){
+	// 	put_char(' ');
+	// }
+	put_str("                                                                                             "); // tova ne e prekaleno burzo
 
 	set_cur_x(old_x);
 }
 
 void new_line(){
 	move_cur_to_next_line();
-	clear_line();
+	clear_line(); // tova ne e prekaleno burzo
 
 	int original_line_y = get_cur_y();
 
 	move_cur_to_next_line();
-	for(int i=0; i<20; ++i){ // TODO tova e giga bavno
-		put_char('^');
-	}
+	// for(int i=0; i<20; ++i){
+	// 	put_char('^');
+	// }
+	put_str("^^^^^^^^^^^^^^^^^^^^^^^"); // tova ne e prekaleno burzo
 
 	set_cur_y(original_line_y);
 	set_cur_x(0);
@@ -204,14 +208,28 @@ void put_char(char ch) __naked{
 
 // we can use `_VPutS` instead - https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
 // if we want some safety we can implement maxlen
-void put_str(char *str){
-	for(;;){
-		char c = *str++;
-		if(c==0){
-			break;
-		}
-		put_char(c);
-	}
+// void put_str(char *str){
+// 	for(;;){
+// 		char c = *str++;
+// 		if(c==0){
+// 			break;
+// 		}
+// 		put_char(c);
+// 	}
+// }
+void put_str(char *str) __naked{
+	// kato vidq .asm i vijdam 4e argumenta se slaga v `hl`
+
+	__asm
+
+		push hl
+
+		abcall(_VPutS) // in(HL); out(HL); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
+
+		pop hl;
+
+		ret
+	__endasm;
 }
 
 // output - debug
@@ -311,10 +329,10 @@ void main() {
 	for(int i=0; i<35; ++i){
 		put_char('a');
 	}
-	set_cur_x(0);
-	for(int i=0; i<93; ++i){
-		put_char(' ');
-	}
+	// set_cur_x(0);
+	// for(int i=0; i<93; ++i){
+	// 	put_char(' ');
+	// }
 	new_line();
 
 	put_str("return test");
