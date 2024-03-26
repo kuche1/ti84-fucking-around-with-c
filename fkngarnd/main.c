@@ -48,6 +48,7 @@
 
 // use some of the worthless ASCII codes
 #define CHAR_CLEAR 1
+#define CHAR_BACKSPACE 2
 
 // macro functions
 
@@ -390,8 +391,8 @@ char get_char_blk(){
 			return '\n';
 		case 9:
 			return CHAR_CLEAR;
-		// case 10: // del
-		// 	return CHAR_BACKSPACE;
+		case 10: // del
+			return CHAR_BACKSPACE;
 		case 128:
 			return '+';
 		case 129:
@@ -424,6 +425,8 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 
 	char starting_x = get_cur_x();
 
+	char byte_start_xs[DISPLAY_WIDTH_PIXELS];
+
 	if(bytes_left <= 0){
 		PUT_COMPTIME_STR("<E0>");
 		return 0;
@@ -443,7 +446,7 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 			char current_x = get_cur_x();
 			char pixels_to_clean = current_x - starting_x;
 			set_cur_x(starting_x);
-			for(int i=0; i<pixels_to_clean; ++i){ // TODO we can optimise this by using the space that is 4 pixels long
+			for(char i=0; i<pixels_to_clean; ++i){ // TODO we can optimise this by using the space that is 4 pixels long
 				put_char(' ');
 			}
 			set_cur_x(starting_x);
@@ -452,8 +455,23 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 			bytes_left = arg_size_place_to_store;
 			bytes_written = 0;
 			continue;
+		}else if(ch == CHAR_BACKSPACE){
+			if(bytes_written <= 0){
+				continue;
+			}
+			bytes_written -= 1;
+			bytes_left += 1;
+			--storage;
+
+			char start_x = byte_start_xs[bytes_written];
+			set_cur_x(start_x);
+			put_char(0x06); // this fat space is 4 pixels wide; it will actually not clear all possible characters, but we'll close our eyes for now
+			set_cur_x(start_x);
+			continue;
 		}
-		
+
+		byte_start_xs[bytes_written] = get_cur_x();
+
 		put_char(ch);
 
 		char cur_x = get_cur_x();
