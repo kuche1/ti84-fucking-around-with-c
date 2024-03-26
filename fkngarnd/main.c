@@ -53,6 +53,9 @@
     rst 40 \
     .dw __LABEL__
 
+#define GET_STR(storage) \
+	get_str(storage, sizeof(storage))
+
 #define PUT_COMPTIME_STR(str) \
 	{ \
 		put_str(str, LENOF(str)-1); /* `-1` as to discard the last 0 */ \
@@ -504,8 +507,8 @@ void main() {
 	// 	put_char_as_num(cur_y);
 	// }
 
-	char inp[35] = "";
-	int written = get_str(inp, 35); // TODO trqbva da napravq GET_COMPTIME_STR ili ne6to takova (ili prosto GET_STR za6toto storage-a vinagi 6te e known at comptime)
+	char inp[35];
+	int written = GET_STR(inp);
 
 	PUT_COMPTIME_STR("input:");
 	put_str(inp, written);
