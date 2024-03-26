@@ -21,8 +21,8 @@ void reset_cursor(){
 }
 
 void reset_screen(){
-	clearScreen();
-	resetPen();
+	clearScreen(); // TODO check regs
+	resetPen(); // TODO check regs
 	reset_cursor();
 }
 
@@ -61,7 +61,7 @@ void reset_screen(){
 
 // output - any letter
 
-void put_small_char(char ch) __naked{
+void put_char(char ch) __naked{
 	// this doesn't automatically go on the next line upon reaching end of current line
 	// in fact, if we reach the end of the screen we have to spam a lot of new lines in order to come back from the top
 
@@ -94,26 +94,26 @@ void put_small_char(char ch) __naked{
 
 // outpu - any string
 
-void put_small_str(char *str){
-	// if we want some safety we can implement maxlen
-
+// we can use `_VPutS` instead - https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
+// if we want some safety we can implement maxlen
+void put_str(char *str){
 	for(;;){
 		char c = *str++;
 		if(c==0){
 			break;
 		}
-		put_small_char(c);
+		put_char(c);
 	}
 }
 
 // output - debug
 
-// lol we can actually use `_DispHL` here - https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
+// we can use `_DispHL` instead - https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
 void put_char_as_num(char ch){
 	// doing recursion on cuch a shitty hardware is risky... I'll use something else if I ever crash
 
 	if(ch < 0){
-		put_small_char('-');
+		put_char('-');
 		return put_char_as_num(ch*-1);
 	}
 
@@ -125,7 +125,7 @@ void put_char_as_num(char ch){
 	}
 
 	char to_put = '0' + last_digit;
-	put_small_char(to_put);
+	put_char(to_put);
 }
 
 // input - scan code
@@ -165,9 +165,9 @@ char get_char_blk(){
 		return (ch - 142) + '0';
 	}
 
-	put_small_char('<');
+	put_char('<');
 	put_char_as_num(ch);
-	put_small_char('>');
+	put_char('>');
 	
 	return '?';
 }
@@ -191,42 +191,42 @@ char ret_test() __naked{
 void main() {
 	reset_screen();
 
-	put_small_char('A');
+	put_char('A');
 	newline();
-	put_small_char('B');
-	put_small_char('C');
-	put_small_char('D');
-	put_small_char('E');
+	put_char('B');
+	put_char('C');
+	put_char('D');
+	put_char('E');
 	newline();
-	put_small_str("q6 mi huq");
+	put_str("q6 mi huq");
 	newline();
 
 	for(int i=0; i<30; ++i){
-		put_small_char('a');
+		put_char('a');
 	}
 	newline();
 
-	put_small_str("return test");
+	put_str("return test");
 	newline();
 	char ret_value = ret_test();
-	put_small_str("returned value: ");
-	put_small_char(ret_value);
+	put_str("returned value: ");
+	put_char(ret_value);
 	newline();
 
-	// put_small_str("enter key: ");
+	// put_str("enter key: ");
 	// char ch = get_char_blk();
-	// put_small_char(ch);
+	// put_char(ch);
 	for(;;){
 		newline();
 		char ch = get_char_blk();
 		if(ch == 'A'){
 			break;
 		}
-		put_small_char(ch);
+		put_char(ch);
 	}
 
 	// char ch = get_key_blk();
-	// put_small_char(ch);
+	// put_char(ch);
 
 	// get_key_blk();
 	// get_key_blk();
