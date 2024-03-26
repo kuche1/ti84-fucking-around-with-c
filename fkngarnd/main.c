@@ -23,6 +23,9 @@
 #define DISPLAY_HEIGHT_PIXELS 63
 #define DISPLAY_WIDTH_PIXELS 95
 
+// use some of the worthless ASCII codes
+#define CHAR_CLEAR 1
+
 // prototypes
 
 void put_char(char ch);
@@ -125,8 +128,6 @@ void reset_screen(){
 // output - new line
 
 void clear_line(){
-	int old_x = get_cur_x();
-
 	set_cur_x(0);
 
 	// for(int i=0; i<93; ++i){
@@ -134,7 +135,7 @@ void clear_line(){
 	// }
 	put_str("                                                                                             "); // tova ne e prekaleno burzo
 
-	set_cur_x(old_x);
+	set_cur_x(0);
 }
 
 void new_line(){
@@ -290,11 +291,65 @@ char get_char_blk(){
 		return (ch - 142) + '0';
 	}
 
+	// other keys
+	switch(ch){
+		case 5: // enter
+			return '\n';
+		case 9:
+			return CHAR_CLEAR;
+		// case 10: // del
+		// 	return CHAR_BACKSPACE;
+		case 128:
+			return '+';
+		case 129:
+			return '-';
+		case 130:
+			return '*';
+		case 131:
+			return '/';
+	}
+
 	put_char('<');
 	put_char_as_num(ch);
 	put_char('>');
 	
 	return '?';
+}
+
+// input - string
+
+void get_str(char *arg_place_to_store, int arg_size_place_to_store){
+	char *storage = arg_place_to_store;
+	int bytes_left = arg_size_place_to_store;
+
+	if(bytes_left <= 0){
+		return;
+	}
+
+	while(bytes_left > 1){
+
+		char ch = get_char_blk();
+
+		if(ch == '\n'){
+			break;
+		}
+
+		if(ch == CHAR_CLEAR){
+			clear_line();
+			storage = arg_place_to_store;
+			bytes_left = arg_size_place_to_store;
+			continue;
+		}
+
+		*storage++ = ch;
+		bytes_left -= 1;
+
+		put_char(ch);
+	}
+
+	*storage = 0;
+
+	new_line();
 }
 
 // return test
@@ -342,20 +397,29 @@ void main() {
 	put_char(ret_value);
 	new_line();
 
-	// put_str("enter key: ");
-	// char ch = get_char_blk();
-	// put_char(ch);
-	for(int count=0;; count += 1){
-		new_line();
-		char ch = get_char_blk();
-		if(ch == 'A'){
-			break;
-		}
-		put_char(ch);
+	// // put_str("enter key: ");
+	// // char ch = get_char_blk();
+	// // put_char(ch);
+	// for(int count=0;; count += 1){
+	// 	new_line();
+	// 	char ch = get_char_blk();
+	// 	if(ch == 'A'){
+	// 		break;
+	// 	}
+	// 	put_char(ch);
 
-		put_char(' ');
-		int cur_y = get_cur_y();
-		put_char_as_num(cur_y);
-	}
+	// 	put_char(' ');
+	// 	int cur_y = get_cur_y();
+	// 	put_char_as_num(cur_y);
+	// }
+
+	char inp[20] = "";
+	get_str(inp, 20);
+
+	put_str("input:");
+	put_str(inp);
+	new_line();
+
+	put_str("BYE");
 
 }
