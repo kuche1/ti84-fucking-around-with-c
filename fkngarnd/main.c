@@ -4,6 +4,9 @@
 // https://taricorp.gitlab.io/83pa28d/lesson/week1/day03/index.html
 // registers: af, bc, de, hl, ix
 
+// ascii representation
+// https://taricorp.gitlab.io/83pa28d/appendix/sfont/index.html
+
 // the return value is to be stored in register `a` (tested with fnc that returns a char; not tested with fnc that takes any arguments)
 //
 // the first argument is stored in `a` (only tested with fnc that takes 1 char argument and does not return)
@@ -465,7 +468,7 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 
 			char start_x = byte_start_xs[bytes_written];
 			set_cur_x(start_x);
-			put_char(0x06); // this fat space is 4 pixels wide; it will actually not clear all possible characters, but we'll close our eyes for now
+			put_char(0x06); // this fat space is 4 pixels wide; it will actually not clear all possible characters (there are some niche 5px chars), but we'll close our eyes for now
 			set_cur_x(start_x);
 			continue;
 		}
