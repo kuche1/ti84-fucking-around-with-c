@@ -12,6 +12,8 @@
 
 // static variables don't seem to work
 
+// use chars whenever possible, as opposed to ints; at some point I got absolute dogshit performance in a for loop, and I fixed the problem by simply using chars instead of ints
+
 // list of (all?) bcalls can be found here: https://wikiti.brandonw.net/index.php?title=Category:83Plus:BCALLs:By_Name
 // if u need to check for a specific hex code just change the last 4 digits of the following link: https://wikiti.brandonw.net/index.php?title=83Plus:RAM:8478
 
@@ -227,7 +229,12 @@ void clear_line(){
 	// 	put_char(' ');
 	// }
 
-	PUT_COMPTIME_STR("                                                                                             "); // this is not too fast...
+	// TODO we can optimise this by using the space that is 4 pixels instead (this one is 1 pixel)
+	// PUT_COMPTIME_STR("                                                                                             "); // this is not too fast...
+
+	for(char i=0; i+=4; i<DISPLAY_WIDTH_PIXELS){
+		put_char(0x06); // fat 4 pixel wide space
+	}
 
 	set_cur_x(0);
 }
