@@ -1,5 +1,5 @@
 
-// info
+//// INFO
 
 // https://taricorp.gitlab.io/83pa28d/lesson/week1/day03/index.html
 // registers: af, bc, de, hl, ix
@@ -11,6 +11,11 @@
 // argumenta na funkciq koqto iziskva edin string pointer i nqma return idva v `hl`
 
 // static variables don't seem to work
+
+//// TODO
+
+// make put_str take string length as argument
+// also make get_str return the length
 
 #include "../TiConstructor/lib/essentials.c"
 
