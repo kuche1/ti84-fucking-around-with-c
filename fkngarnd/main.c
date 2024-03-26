@@ -1,9 +1,9 @@
 
 // info
 //
-// the return value is to be stored in register `a` (not tested with fnc that takes any arguments)
+// the return value is to be stored in register `a` (tested with fnc that returns a char; not tested with fnc that takes any arguments)
 //
-// the first argument is stored in `a` (only tested with fnc that takes 1 argument and does not return)
+// the first argument is stored in `a` (only tested with fnc that takes 1 char argument and does not return)
 
 #define USE_GETKEY
 #define USE_HEXDUMP
@@ -12,24 +12,30 @@
 #include "../TiConstructor/lib/textio.c"
 #include "../TiConstructor/lib/userinput.c"
 
-// screen state
+// screen, cursor
 
-// void clear_screen() __naked{
-// 	__asm
-		
-// 		bacall(_ClrScrnFull)
+void set_cur_y(char y) __naked{
+	__asm
+		ld (#penCol), a
+		ret
+	__endasm;
+}
 
-// 	__endasm;
-// }
+void set_cur_x(char x) __naked{
+	__asm
+		ld (#penRow), a
+		ret
+	__endasm;
+}
 
-void reset_cursor(){
-	bcall(_HomeUp);
+void reset_cur(){
+	set_cur_y(0);
+	set_cur_x(0);
 }
 
 void reset_screen(){
 	clearScreen(); // TODO check regs
-	resetPen(); // TODO check regs
-	reset_cursor();
+	reset_cur();
 }
 
 // output - hardcoded letters
@@ -193,6 +199,15 @@ char ret_test() __naked{
 
 // main
 
+void test123() __naked{
+	__asm
+		ld a, #0
+		ld (#penCol), a
+		ld (#penRow), a
+		ret
+	__endasm;
+}
+
 void main() {
 	reset_screen();
 
@@ -214,20 +229,24 @@ void main() {
 	put_str("return test");
 	newline();
 	char ret_value = ret_test();
-	put_str("returned value: ");
+	put_str("asd value: ");
 	put_char(ret_value);
 	newline();
 
 	// put_str("enter key: ");
 	// char ch = get_char_blk();
 	// put_char(ch);
-	for(;;){
+	for(int count=0;; count += 1){
 		newline();
 		char ch = get_char_blk();
 		if(ch == 'A'){
 			break;
 		}
 		put_char(ch);
+		if(count % 3 == 0){
+			test123();
+			put_str("called test123");
+		}
 	}
 
 	// char ch = get_key_blk();
