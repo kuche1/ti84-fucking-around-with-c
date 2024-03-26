@@ -86,6 +86,43 @@ void printc(char ch) __naked{
 	__endasm;
 }
 
+// time
+
+// // https://wikiti.brandonw.net/index.php?title=83Plus:RAM:8478
+// char get_time_sec() __naked{
+// 	__asm
+
+// 		push af
+// 		push bc
+// 		push de
+// 		push hl
+// 		push ix
+
+// 		BCALL(_getTime)
+
+// 		BCALL(_PopRealO1)
+
+// 		// ld a, (#OP1)
+// 		// ld a, (#FPS)
+
+// 		ld hl, #OP1
+// 		inc hl
+// 		// inc hl
+// 		// inc hl
+// 		// inc hl
+// 		// dec hl
+// 		ld a, (hl)
+
+// 		pop ix
+// 		pop hl
+// 		pop de
+// 		pop bc
+// 		pop af
+
+// 		ret
+// 	__endasm;
+// }
+
 // cursor get
 
 char get_cur_y() __naked{
@@ -415,13 +452,13 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 		put_char(ch);
 
 		char cur_x = get_cur_x();
-		char cur_y = get_cur_y();
+		// char cur_y = get_cur_y();
 
-		set_cur_y(0);
-		clear_line();
-		put_char_as_num(cur_x);
-		set_cur_y(cur_y);
-		set_cur_x(cur_x);
+		// set_cur_y(0);
+		// clear_line();
+		// put_char_as_num(cur_x);
+		// set_cur_y(cur_y);
+		// set_cur_x(cur_x);
 
 		if(cur_x >= DISPLAY_WIDTH_PIXELS - FATTEST_SYMBOL_WIDTH_PIXELS - 1){ // we actually need to leave some headroom here because the cursor will not saturate or overflow when the end has been reched - instead it will stay the same
 			// no more space on screen
@@ -459,6 +496,12 @@ char ret_test() __naked{
 void main() {
 	reset_screen();
 
+	// for(int i=0; i<5; ++i){
+	// 	char time = get_time_sec();
+	// 	put_char_as_num(time);
+	// 	new_line();
+	// }
+
 	{
 		char x0 = get_cur_x();
 		put_char('S');
@@ -494,29 +537,16 @@ void main() {
 	put_char(ret_value);
 	new_line();
 
-	// // put_str("enter key: ");
-	// // char ch = get_char_blk();
-	// // put_char(ch);
-	// for(int count=0;; count += 1){
-	// 	new_line();
-	// 	char ch = get_char_blk();
-	// 	if(ch == 'A'){
-	// 		break;
-	// 	}
-	// 	put_char(ch);
+	{
+		PUT_COMPTIME_STR("throw me some letters:");
 
-	// 	put_char(' ');
-	// 	int cur_y = get_cur_y();
-	// 	put_char_as_num(cur_y);
-	// }
+		char inp[35];
+		int written = GET_STR(inp);
 
-	char inp[35];
-	int written = GET_STR(inp);
-
-	PUT_COMPTIME_STR("input:");
-	put_str(inp, written);
-	new_line();
+		PUT_COMPTIME_STR("input:");
+		put_str(inp, written);
+		new_line();
+	}
 
 	PUT_COMPTIME_STR("BYE");
-
 }
