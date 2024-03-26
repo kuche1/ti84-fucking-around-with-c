@@ -67,19 +67,26 @@ void put_small_char(char ch) __naked{
 
 	__asm
 
-		// https://z88dk.org/wiki/doku.php?id=usage:stackframe
+		// kato pogledna .asm faila i izglejda vikagi `ch` e `a`
+		// qvno putviq argument na dadena funkciq vikagi e `a`
 
-		push hl
+		push af
 		push de
+		push hl
+		push ix
 
-		// bate ne sum na 100% za6to tova raboti (testval sum go)
-		ld hl, #0
-		add hl, sp
-		ld e, (hl)
-		abcall(_VPutMap) // https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
+		// https://z88dk.org/wiki/doku.php?id=usage:stackframe
+		// // bate ne znam za6to tova raboti
+		// ld hl, #2 // tova raboti i s 0 i s 4 nz 6to
+		// add hl, sp
+		// // ld e, (hl) // tova raboti
+		// ld a, (hl) // tova ne raboti
+		abcall(_VPutMap) // in(A) trash(all but BC and HL) // https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
 
-		pop de
+		pop ix
 		pop hl
+		pop de
+		pop af
 
 		ret
 	__endasm;
