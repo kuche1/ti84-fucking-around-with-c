@@ -67,6 +67,7 @@
 // prototypes
 
 void put_char(char ch);
+void put_char_as_num(char ch);
 void put_str(char *str, int len);
 
 // magic - don't remove this or the code stops working; I don't know why
@@ -231,7 +232,7 @@ void clear_line(){
 	set_cur_x(0);
 }
 
-void new_line(){
+void new_line(char id){
 	// TODO tova koeto izpolzvame za indikaciq na reda e super bavno
 	// trqbva da izmislq ne6to po-umno
 
@@ -241,15 +242,22 @@ void new_line(){
 	int original_line_y = get_cur_y();
 
 	move_cur_to_next_line();
-	// for(int i=0; i<20; ++i){
-	// 	put_char('^');
-	// }
 
 	// it looks as if we can put one more `^` here, but we really can't
 	PUT_COMPTIME_STR("^^^^^^^^^^^^^^^^^^^^^^^") // this is not too fast
 
 	set_cur_y(original_line_y);
 	set_cur_x(0);
+
+	// id += 1;
+	// if(id == '9'+1){
+	// 	id = 'A';
+	// }else if(id == 'F'+1){
+	// 	id = '0';
+	// }
+
+	// put_char(id);
+	// put_char(':');
 }
 
 // output - hardcoded letters
