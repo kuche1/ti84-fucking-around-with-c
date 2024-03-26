@@ -233,31 +233,14 @@ void clear_line(){
 }
 
 void new_line(){
-	// TODO tova koeto izpolzvame za indikaciq na reda e super bavno
-	// trqbva da izmislq ne6to po-umno
+	set_cur_x(0);
+	// PUT_COMPTIME_STR("   "); // enogh to wipe the `>` - https://taricorp.gitlab.io/83pa28d/appendix/sfont/index.html
+	put_char(0x06); // see https://taricorp.gitlab.io/83pa28d/appendix/sfont/index.html
 
 	move_cur_to_next_line();
 	clear_line(); // tova ne e prekaleno burzo
 
-	int original_line_y = get_cur_y();
-
-	move_cur_to_next_line();
-
-	// it looks as if we can put one more `^` here, but we really can't
-	PUT_COMPTIME_STR("^^^^^^^^^^^^^^^^^^^^^^^") // this is not too fast
-
-	set_cur_y(original_line_y);
-	set_cur_x(0);
-
-	// id += 1;
-	// if(id == '9'+1){
-	// 	id = 'A';
-	// }else if(id == 'F'+1){
-	// 	id = '0';
-	// }
-
-	// put_char(id);
-	// put_char(':');
+	put_char('>');
 }
 
 // output - hardcoded letters
