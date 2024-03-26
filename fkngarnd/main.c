@@ -8,6 +8,8 @@
 //
 // the first argument is stored in `a` (only tested with fnc that takes 1 char argument and does not return)
 
+// static variables don't seem to work
+
 #include "../TiConstructor/lib/essentials.c"
 
 // AKO ZAKOMENTIRAM TIQ 2TA FAILA NE6TO STAVA I ELKATA KRA6VA
@@ -18,6 +20,10 @@
 // different symbols have different width; we can change this if we make a wrapper around the put_char fnc that checks for the cursor x
 #define DISPLAY_HEIGHT_PIXELS 63
 #define DISPLAY_WIDTH_PIXELS 95
+
+// prototypes
+
+void put_char(char ch);
 
 // cursor get
 
@@ -67,6 +73,22 @@ void reset_cur(){
 // 	__endasm;
 // }
 
+// cursor - move on next line
+
+void move_cur_to_next_line(){
+	char y = get_cur_y();
+
+	y += SYMBOL_HEIGHT_PIXELS + 1; // +1 so that letters are not glued togethere
+
+	if(y + SYMBOL_HEIGHT_PIXELS > DISPLAY_HEIGHT_PIXELS){ // `+ SYMBOL_HEIGHT_PIXELS` so that we know there is enough screen space for the next symbol
+		y = 0;
+	}
+
+	set_cur_y(y);
+
+	set_cur_x(0);
+}
+
 // screen clear
 
 void clear_screen() __naked{
@@ -99,32 +121,29 @@ void reset_screen(){
 
 // output - new line
 
-void new_line(){
-	char y = get_cur_y();
-
-	y += SYMBOL_HEIGHT_PIXELS + 1; // +1 so that letters are not glued togethere
-
-	if(y + SYMBOL_HEIGHT_PIXELS > DISPLAY_HEIGHT_PIXELS){ // `+ SYMBOL_HEIGHT_PIXELS` so that we know there is enough screen space for the next symbol
-		y = 0;
-	}
-
-	set_cur_y(y);
+void clear_line(){
+	int old_x = get_cur_x();
 
 	set_cur_x(0);
+
+	// TODO tova e giga bavno
+	for(int i=0; i<93; ++i){
+		put_char(' ');
+	}
+
+	set_cur_x(old_x);
 }
 
-// void new_line() __naked{
-// 	__asm
-// 		ld a, (#penRow)
-// 		ld b, #6
-// 		add b
-// 		ld (#penRow), a
+void new_line(){
+	move_cur_to_next_line();
 
-// 		xor a, a
-// 		ld (#penCol), a
-// 		ret
-// 	__endasm;
-// }
+	clear_line();
+
+	char line_id = 'A';
+	put_char(line_id);
+	line_id += 1;
+	put_char(':');
+}
 
 // output - hardcoded letters
 
@@ -294,8 +313,12 @@ void main() {
 	put_str("q6 mi huq");
 	new_line();
 
-	for(int i=0; i<30; ++i){
+	for(int i=0; i<35; ++i){
 		put_char('a');
+	}
+	set_cur_x(0);
+	for(int i=0; i<93; ++i){
+		put_char(' ');
 	}
 	new_line();
 
@@ -320,30 +343,6 @@ void main() {
 		put_char(' ');
 		int cur_y = get_cur_y();
 		put_char_as_num(cur_y);
-
-		// if(count % 3 == 0){
-		// 	test123();
-		// 	put_str("called test123");
-		// }
 	}
 
-	// char ch = get_key_blk();
-	// put_char(ch);
-
-	// get_key_blk();
-	// get_key_blk();
-	// get_key_blk();
-	// get_key_blk();
-	// get_key_blk();
-
-	// for(;;){
-	// 	char key = getKey();
-	// 	if(key == sk0){
-	// 		break;
-	// 	}
-
-	// 	println("fuck you");
-	// }
-
-	// PressAnyKey();
 }
