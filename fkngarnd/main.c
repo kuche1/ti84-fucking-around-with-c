@@ -400,6 +400,10 @@ char get_char_blk(){
 			return '*';
 		case 131:
 			return '/';
+		case 133:
+			return '(';
+		case 134:
+			return ')';
 		case 153:
 			return ' ';
 	}
@@ -530,7 +534,7 @@ void main() {
 	new_line();
 
 	{
-		PUT_COMPTIME_STR("throw me some letters:");
+		PUT_COMPTIME_STR("inp:");
 
 		char inp[35];
 		int written = GET_STR(inp);
@@ -540,5 +544,10 @@ void main() {
 		new_line();
 	}
 
+	PUT_COMPTIME_STR("press any key to exit");
+	get_sk_blk();
+	new_line();
+
 	PUT_COMPTIME_STR("BYE");
+	new_line();
 }
