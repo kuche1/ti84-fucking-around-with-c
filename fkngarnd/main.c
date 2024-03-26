@@ -19,10 +19,6 @@
 
 #include "../TiConstructor/lib/essentials.c"
 
-// AKO ZAKOMENTIRAM TIQ 2TA FAILA NE6TO STAVA I ELKATA KRA6VA
-#include "../TiConstructor/lib/textio.c" // tova kato go zakomentiram i ne6tata po4vat da se usirat
-// #include "../TiConstructor/lib/userinput.c" // za sega izglejda kato tova da moga da go zakomentiram bez problemi
-
 #define SYMBOL_HEIGHT_PIXELS 5
 // different symbols have different width; we can change this if we make a wrapper around the put_char fnc that checks for the cursor x
 #define DISPLAY_HEIGHT_PIXELS 63
@@ -35,6 +31,23 @@
 
 void put_char(char ch);
 void put_str(char *str);
+
+// magic - don't remove this or the code stops working; I don't know why
+
+void printc(char ch) __naked{
+	ch;
+	__asm
+		pop hl      ; Get input
+		pop bc
+		push bc
+		push hl 
+		ld a, c
+		push ix
+		abcall(_VPutMap)
+		pop ix
+		ret
+	__endasm;
+}
 
 // cursor get
 
