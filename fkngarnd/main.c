@@ -64,8 +64,7 @@
 #define DISPLAY_HEIGHT_PIXELS 64 // indexed 0-63
 #define DISPLAY_WIDTH_PIXELS 96 // indexed 0-95
 
-// #define REPLACE_SPACE1PX_WITH_SPACE4PX 0 // TODO izhlejda kato tova e 0 i iz4ezvu buga kudeto put_multipile_str mi qde bukvite // 0 or 1; checks if we are to print the 1pixel space, and replaces it with the 4pixel space, for readability
-#define REPEAT_SPACE1PX 2 // how many times to repeat the space1px character when requested, as to increase readability; 1 mean repeat once, so it will be printed twice in total
+#define REPEAT_SPACE1PX 2 // how many times to repeat the space1px character when requested, as to increase readability; 1 mean repeat once, so it will be printed twice in total // predi prosto zamenqh s 4px space-a no tova nqkak suzdade nqkakuv bug koito qde bukvi
 #define ASCII_SPACE_1PX ' '
 #define ASCII_SPACE_4PX 0x06
 #define ASCII_CURRENT_LINE_INDICATOR 0x05 // this needs to be at max 4px wide, so that we can clear it with a single 4px space
@@ -278,19 +277,6 @@ void put_char_nowrapper(char ch) __naked{
 // returns 1 if the character was a new line
 void put_char(char ch){
 
-// 	switch(ch){
-// #if REPLACE_SPACE1PX_WITH_SPACE4PX
-// 		case ASCII_SPACE_1PX:
-// 			ch = ASCII_SPACE_4PX;
-// 			break;
-// #endif
-// #if 0
-// 		case '\n':
-// 			new_line();
-// 			return;
-// #endif
-// 	}
-
 #if REPEAT_SPACE1PX
 	if(ch == ASCII_SPACE_1PX){
 		for(char i=0; i<REPEAT_SPACE1PX; ++i){
@@ -327,7 +313,6 @@ void put_str(char *str, int len){
 	}
 }
 
-// TODO tuk ima nqkakuv buz - tova izqjda po 1 character ot vreme na vreme kogato ima nov red (nezavisimo dali e normaklen ili PUT_MULTILINE_STR_PAUSE_EVERY_N_LINES)
 void put_multiline_str(char *str, int len){
 	if(len < 0){
 		PUT_COMPTIME_STR("<E2>");
