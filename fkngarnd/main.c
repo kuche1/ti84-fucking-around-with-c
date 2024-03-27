@@ -23,6 +23,8 @@
 // if your cursor has reached the end of the screen and you try to put a character, the cursor's position will actually stay the same instead of increasing, overflowing or saturating
 // tested with the X position of the cursor
 
+// the syntax `char str* = "asdf";` seems to not work at all; instead you should use the string inplace `"asdasd"` or the bracket syntax `char str[] = "asdf";`
+
 //// CONVENTIONS
 
 // if we are to signify any "warning" we do it by printing `<TEXT>`, where `TEXT` is the actual text of the warning
@@ -70,7 +72,6 @@
 #define GET_STR(storage) \
 	get_str(storage, sizeof(storage))
 
-// this only seems to work with strings that are defined inplace (eg "asdf"), and one that are defines linke so `char str0[] = "asd";`, but not with strings that are defined like so: `char *str0 = "asd";`
 #define PUT_COMPTIME_STR(str) \
 	{ \
 		put_str(str, LENOF(str)-1); /* `-1` as to discard the last 0 */ \
@@ -471,5 +472,6 @@ void main() {
 	put_bad_str(str1);
 	new_line();
 
+	PUT_COMPTIME_STR("press enter to exit");
 	get_sk_blk();
 }
