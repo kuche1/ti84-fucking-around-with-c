@@ -72,6 +72,8 @@
 #define CHAR_CLEAR 0x01
 #define CHAR_BACKSPACE 0x02
 
+#define PUT_MULTILINE_STR_PAUSE_EVERY_N_LINES 6
+
 // macro functions
 
 #define LENOF(var) \
@@ -91,6 +93,7 @@
 
 // prototypes
 
+char get_sk_blk();
 void put_char(char ch);
 void put_char_as_num(char ch);
 void put_str(char *str, int len);
@@ -302,10 +305,19 @@ void put_multiline_str(char *str, int len){
 
 	char *end = str + len;
 
+	char new_lines_put = 0;
+
 	while(str != end){
 		char cur_x = get_cur_x();
 		if(!screen_check_x_if_enough_space_for_1_more_char(cur_x)){
 			new_line();
+			new_lines_put += 1;
+			if(new_lines_put >= PUT_MULTILINE_STR_PAUSE_EVERY_N_LINES){
+				new_lines_put = 0;
+				PUT_COMPTIME_STR("press key to keep going");
+				get_sk_blk();
+				clear_line();
+			}
 		}
 		put_char(*str++);
 	}
@@ -313,6 +325,8 @@ void put_multiline_str(char *str, int len){
 
 // I hate this
 void put_bad_multiline_str(char *str){
+	char new_lines_put = 0;
+
 	for(;;){
 		char ch = *str++;
 		if(ch == 0){
@@ -322,6 +336,13 @@ void put_bad_multiline_str(char *str){
 		char cur_x = get_cur_x();
 		if(!screen_check_x_if_enough_space_for_1_more_char(cur_x)){
 			new_line();
+			new_lines_put += 1;
+			if(new_lines_put >= PUT_MULTILINE_STR_PAUSE_EVERY_N_LINES){
+				new_lines_put = 0;
+				PUT_COMPTIME_STR("press any to continue printing");
+				get_sk_blk();
+				clear_line();
+			}
 		}
 		put_char(ch);
 	}
@@ -560,6 +581,9 @@ void main() {
 
 			reset_screen();
 
+			PUT_COMPTIME_STR("QUESTION");
+			new_line();
+
 			put_bad_multiline_str(vupros);
 			new_line();
 
@@ -570,25 +594,30 @@ void main() {
 				continue;
 			}
 
+			reset_screen();
+
+			PUT_COMPTIME_STR("ANSWER");
+			new_line();
+
 			put_bad_multiline_str(otgovor);
 			new_line();
 
-			PUT_COMPTIME_STR("press key to continue");
+			PUT_COMPTIME_STR("pres key 4 next question");
 			get_sk_blk();
 			new_line();
 		}
 	}
 
-	{
-		PUT_COMPTIME_STR("enter:");
+	// {
+	// 	PUT_COMPTIME_STR("enter:");
 
-		char data[30];
-		int written = get_str(data, sizeof(data));
+	// 	char data[30];
+	// 	int written = get_str(data, sizeof(data));
 
-		PUT_COMPTIME_STR("got:")
-		put_str(data, written);
-		new_line();
-	}
+	// 	PUT_COMPTIME_STR("got:")
+	// 	put_str(data, written);
+	// 	new_line();
+	// }
 
 	PUT_COMPTIME_STR("press any key to exit");
 	get_sk_blk();
