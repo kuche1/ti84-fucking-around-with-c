@@ -1,4 +1,44 @@
 
+
+
+// // I hate this
+// void put_bad_multiline_str(char *str){
+// 	char new_lines_put = 0;
+
+// 	for(;;){
+// 		char ch = *str++;
+
+// 		if(ch == 0){
+// 			break;
+// 		}
+
+// 		char cur_x = get_cur_x();
+// 		char no_more_space = !screen_check_x_if_enough_space_for_1_more_char(cur_x);
+// 		char char_is_new_line = ch == '\n';
+
+// 		if(no_more_space || char_is_new_line){
+// 			new_line();
+// 			new_lines_put += 1;
+// 			if(new_lines_put >= PUT_MULTILINE_STR_PAUSE_EVERY_N_LINES){
+// 				new_lines_put = 0;
+// 				PUT_COMPTIME_STR("press key to keep going");
+// 				get_sk_blk();
+// 				clear_line();
+// 			}
+// 		}
+
+// 		if(!char_is_new_line){
+// 			put_char(ch);
+// 		}
+// 	}
+// }
+
+
+
+
+
+
+
 // outputs a regular C string that end with 0
 // this doesn't seem to be much faster than manually doing a loop in C
 void put_bad_str(char *str) __naked{
