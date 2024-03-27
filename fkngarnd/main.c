@@ -68,8 +68,8 @@
 #define ASCII_CURRENT_LINE_INDICATOR 0x05 // this needs to be at max 4px wide, so that we can clear it with a single 4px space
 
 // use some of the worthless ASCII codes
-#define CHAR_CLEAR 1
-#define CHAR_BACKSPACE 2
+#define CHAR_CLEAR 0x01
+#define CHAR_BACKSPACE 0x02
 
 // macro functions
 
