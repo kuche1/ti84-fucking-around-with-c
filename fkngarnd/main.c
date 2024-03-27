@@ -402,6 +402,8 @@ char get_char_blk(){
 			return '*';
 		case 131:
 			return '/';
+		case 132:
+			return '^';
 		case 133:
 			return '(';
 		case 134:
