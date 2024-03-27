@@ -66,6 +66,7 @@
 #define ASCII_SPACE_1PX ' '
 #define ASCII_SPACE_4PX 0x06
 #define ASCII_CURRENT_LINE_INDICATOR 0x05 // this needs to be at max 4px wide, so that we can clear it with a single 4px space
+#define ASCII_UNKNOWN_CHARACTER '?' // what are we going to return if we get an unknown key code
 
 // use some of the worthless ASCII codes
 #define CHAR_CLEAR 0x01
@@ -407,13 +408,19 @@ char get_char_blk(){
 			return ')';
 		case 153:
 			return ' ';
+		case 198:
+			return ':';
+		case 202:
+			return '?';
+		case 203:
+			return '"';
 	}
 
 	PUT_COMPTIME_STR("<chr");
 	put_char_as_num(ch);
 	put_char('>');
 	
-	return '?';
+	return ASCII_UNKNOWN_CHARACTER;
 }
 
 // input - string
