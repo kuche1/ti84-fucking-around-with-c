@@ -31,7 +31,7 @@
 
 //// TODO
 
-// empty
+// perhaps we should dedicate the top line for error codes, battery, and memory
 
 //// CODE
 
@@ -41,6 +41,7 @@
 #pragma disable_warning 85 // disable parameter not used warning
 // #pragma disable_warning 59 // disable no return warning
 #pragma disable_warning 283 // disable: function declarator with no prototype
+#pragma disable_warning 196 // disable: pointer target lost const qualifier
 
 // display params
 #define SYMBOL_HEIGHT_PIXELS 5
@@ -51,6 +52,7 @@
 
 #define ASCII_SPACE_1PX ' '
 #define ASCII_SPACE_4PX 0x06
+#define ASCII_CURRENT_LINE_INDICATOR '>'
 
 // use some of the worthless ASCII codes
 #define CHAR_CLEAR 1
@@ -68,6 +70,7 @@
 #define GET_STR(storage) \
 	get_str(storage, sizeof(storage))
 
+// this only seems to work with strings that are defined inplace (eg "asdf"), and one that are defines linke so `char str0[] = "asd";`, but not with strings that are defined like so: `char *str0 = "asd";`
 #define PUT_COMPTIME_STR(str) \
 	{ \
 		put_str(str, LENOF(str)-1); /* `-1` as to discard the last 0 */ \
@@ -179,6 +182,7 @@ void clear_screen() __naked{
 void reset_screen(){
 	clear_screen();
 	reset_cur();
+	put_char(ASCII_CURRENT_LINE_INDICATOR);
 }
 
 // output - new line
@@ -198,9 +202,9 @@ void new_line(){
 	put_char(ASCII_SPACE_4PX);
 
 	move_cur_to_next_line();
-	clear_line(); // tova ne e prekaleno burzo
+	clear_line();
 
-	put_char('>');
+	put_char(ASCII_CURRENT_LINE_INDICATOR);
 }
 
 // output - char
@@ -238,7 +242,7 @@ void put_char(char ch) __naked{
 
 // output - string
 
-// if we want some safety we can implement maxlen
+// if we want some more safety we can implement maxlen
 void put_str(char *str, int len){
 	if(len < 0){
 		PUT_COMPTIME_STR("<E1>");
@@ -249,6 +253,22 @@ void put_str(char *str, int len){
 	while(str != end){
 		put_char(*str++);
 	}
+}
+
+// this doesn't seem to be much faster than manually doing a loop in C
+void put_bad_str(char *str) __naked{
+	// kato vidq .asm i vijdam 4e argumenta se slaga v `hl`
+
+	__asm
+
+		push hl
+
+		BCALL(_VPutS) // in(HL); out(HL); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
+
+		pop hl;
+
+		ret
+	__endasm;
 }
 
 // output - debug
@@ -430,55 +450,26 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 void main() {
 	reset_screen();
 
-	// for(int i=0; i<5; ++i){
-	// 	char time = get_time_sec();
-	// 	put_char_as_num(time);
-	// 	new_line();
+	// char *pairs_vupros_otgovor[] = {
+	// 	"4. (4 tochki) Kakvo predstavlqva plana za upravlenie v optichnata mreja",
+	// 	"Plan za upravlenie. Tova e vseobhvatnata ravnina, koqto se zanimava s vsichki operacii po administrirane, poddrujka, monitoring na izpulnenieto, diagnostika na greshki, subirane na statisticheski danni i dr.",
+	// };
+
+	// for(char i=0; i<LENOF(pairs_vupros_otgovor); ++i){
+	// 	char *str = pairs_vupros_otgovor[i];
+	// 	put_bad_str(str);
 	// }
 
-	{
-		char x0 = get_cur_x();
-		put_char('S');
-		char x1 = get_cur_x();
+	char str0[] = "4. (4 tochki) Kakvo predstavlqva plana za upravlenie v optichnata mreja";
+	char str1[] = "Plan za upravlenie. Tova e vseobhvatnata ravnina, koqto se zanimava s vsichki operacii po administrirane, poddrujka, monitoring na izpulnenieto, diagnostika na greshki, subirane na statisticheski danni i dr.";
 
-		put_char(' ');
-		put_char_as_num(x0);
-		put_char(' ');
-		put_char_as_num(x1);
-
-		new_line();
-	}
-
-	put_char('A');
-	new_line();
-	put_char('B');
-	put_char('C');
-	put_char('D');
-	put_char('E');
-	new_line();
-	PUT_COMPTIME_STR("q6 mi huq");
+	// put_bad_str(str0);
+	// PUT_COMPTIME_STR("4. (4 tochki) Kakvo predstavlqva plana za upravlenie v optichnata mreja");
+	PUT_COMPTIME_STR(str0);
 	new_line();
 
-	// for(int i=0; i<35; ++i){
-	// 	put_char('a');
-	// }
-	// new_line();
+	put_bad_str(str1);
+	new_line();
 
-	{
-		PUT_COMPTIME_STR("inp:");
-
-		char inp[35];
-		int written = GET_STR(inp);
-
-		PUT_COMPTIME_STR("input:");
-		put_str(inp, written);
-		new_line();
-	}
-
-	PUT_COMPTIME_STR("press any key to exit");
 	get_sk_blk();
-	new_line();
-
-	PUT_COMPTIME_STR("BYE");
-	new_line();
 }
