@@ -65,7 +65,7 @@
 #define REPLACE_SPACE1PX_WITH_SPACE4PX 1 // 0 or 1; checks if we are to print the 1pixel space, and replaces it with the 4pixel space, for readability
 #define ASCII_SPACE_1PX ' '
 #define ASCII_SPACE_4PX 0x06
-#define ASCII_CURRENT_LINE_INDICATOR '>'
+#define ASCII_CURRENT_LINE_INDICATOR 0x05 // used to be '>'
 
 // use some of the worthless ASCII codes
 #define CHAR_CLEAR 1
