@@ -436,14 +436,17 @@ char get_yes_or_no(){
 		char ch = get_char_blk();
 
 		switch(ch){
+
 			case 'Y':
 			case '1':
 				ret = 1;
 				break;
+
 			case 'N':
 			case '0':
 				ret = 0;
 				break;
+
 			default:
 				continue;
 		}
