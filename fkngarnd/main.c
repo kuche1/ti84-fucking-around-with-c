@@ -62,6 +62,7 @@
 #define DISPLAY_HEIGHT_PIXELS 64 // indexed 0-63
 #define DISPLAY_WIDTH_PIXELS 96 // indexed 0-95
 
+#define REPLACE_SPACE1PX_WITH_SPACE4PX 1 // 0 or 1; checks if we are to print the 1pixel space, and replaces it with the 4pixel space, for readability
 #define ASCII_SPACE_1PX ' '
 #define ASCII_SPACE_4PX 0x06
 #define ASCII_CURRENT_LINE_INDICATOR '>'
@@ -228,7 +229,7 @@ void new_line(){
 
 // output - char
 
-void put_char(char ch) __naked{
+void put_char_nowrapper(char ch) __naked{
 	// this doesn't automatically go on the next line upon reaching end of current line
 	// in fact, if we reach the end of the screen we have to spam a lot of new lines in order to come back from the top
 
@@ -259,23 +260,25 @@ void put_char(char ch) __naked{
 	__endasm;
 }
 
+void put_char(char ch){
+#if REPLACE_SPACE1PX_WITH_SPACE4PX
+	if(ch == ASCII_SPACE_1PX){
+		ch = ASCII_SPACE_4PX;
+	}
+#endif
+	put_char_nowrapper(ch);
+}
+
 // output - string
 
-// outputs a regular C string that end with 0
-// this doesn't seem to be much faster than manually doing a loop in C
-void put_bad_str(char *str) __naked{
-	// kato vidq .asm i vijdam 4e argumenta se slaga v `hl`
-
-	__asm
-
-		push hl
-
-		BCALL(_VPutS) // in(HL); out(HL); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
-
-		pop hl;
-
-		ret
-	__endasm;
+void put_bad_str(char *str){
+	for(;;){
+		char ch = *str++;
+		if(ch == 0){
+			break;
+		}
+		put_char(ch);
+	}
 }
 
 // if we want some more safety we can implement maxlen
@@ -287,6 +290,22 @@ void put_str(char *str, int len){
 	char *end = str + len;
 
 	while(str != end){
+		put_char(*str++);
+	}
+}
+
+void put_multiline_str(char *str, int len){
+	if(len < 0){
+		PUT_COMPTIME_STR("<E2>");
+	}
+
+	char *end = str + len;
+
+	while(str != end){
+		char cur_x = get_cur_x();
+		if(!screen_check_x_if_enough_space_for_1_more_char(cur_x)){
+			new_line();
+		}
 		put_char(*str++);
 	}
 }
@@ -304,22 +323,6 @@ void put_bad_multiline_str(char *str){
 			new_line();
 		}
 		put_char(ch);
-	}
-}
-
-void put_multiline_str(char *str, int len){
-	if(len < 0){
-		PUT_COMPTIME_STR("<E2>");
-	}
-
-	char *end = str + len;
-
-	while(str != end){
-		char cur_x = get_cur_x();
-		if(!screen_check_x_if_enough_space_for_1_more_char(cur_x)){
-			new_line();
-		}
-		put_char(*str++);
 	}
 }
 
@@ -514,14 +517,14 @@ void main() {
 			put_bad_multiline_str(vupros);
 			new_line();
 
-			PUT_COMPTIME_STR("press any key");
+			PUT_COMPTIME_STR("press key for answer");
 			get_sk_blk();
 			new_line();
 
 			put_bad_multiline_str(otgovor);
 			new_line();
 
-			PUT_COMPTIME_STR("press any key");
+			PUT_COMPTIME_STR("press key to continue");
 			get_sk_blk();
 			new_line();
 		}

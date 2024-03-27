@@ -1,4 +1,25 @@
 
+// outputs a regular C string that end with 0
+// this doesn't seem to be much faster than manually doing a loop in C
+void put_bad_str(char *str) __naked{
+	// kato vidq .asm i vijdam 4e argumenta se slaga v `hl`
+
+	__asm
+
+		push hl
+
+		BCALL(_VPutS) // in(HL); out(HL); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
+
+		pop hl;
+
+		ret
+	__endasm;
+}
+
+
+
+
+
 // time
 
 // // https://wikiti.brandonw.net/index.php?title=83Plus:RAM:8478
@@ -77,25 +98,6 @@
 // }
 
 
-
-
-
-
-// // tova mi se struva 4e ne e po-burzo ot C for versiqta
-// void put_str(char *str) __naked{
-// 	// kato vidq .asm i vijdam 4e argumenta se slaga v `hl`
-
-// 	__asm
-
-// 		push hl
-
-// 		BCALL(_VPutS) // in(HL); out(HL); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
-
-// 		pop hl;
-
-// 		ret
-// 	__endasm;
-// }
 
 
 
