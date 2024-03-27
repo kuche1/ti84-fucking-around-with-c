@@ -6,7 +6,7 @@ HERE=$(readlink -f $(dirname "$BASH_SOURCE"))
 
 SDCC_WARNING_FLAGS='--Werror'
 
-SDCC_OPTIMISATION_FLAGS='--max-allocs-per-node 100000'
+SDCC_OPTIMISATION_FLAGS='--max-allocs-per-node 60000'
 # if you want speed or size, possibly to the detrement of the other: --opt-code-size --opt-code-speed
 # default --max-allocs-per-node is 3000; this can be increased as to produce a more optimised binary, but the compilation will take longer
 
