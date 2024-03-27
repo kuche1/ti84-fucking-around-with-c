@@ -11,7 +11,8 @@ bash "$HERE/build_files/build_app.sh" fkngarnd fkngarnd
 
 COMFILED_FILE="$HERE/fkngarnd/fkngarnd.8xk"
 
-echo "Compiled binary size: $(stat -c %s "$COMFILED_FILE") bytes"
+#echo "Compiled binary size: $(stat -c %s "$COMFILED_FILE") bytes"
+# TiLP reports different numbers
 
 echo 'Transfering...'
 
