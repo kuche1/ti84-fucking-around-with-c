@@ -425,6 +425,36 @@ char get_char_blk(){
 	return ASCII_UNKNOWN_CHARACTER;
 }
 
+// input - logic
+
+char get_yes_or_no(){
+	PUT_COMPTIME_STR("Y/N:");
+
+	char ret;
+
+	for(;;){
+		char ch = get_char_blk();
+
+		switch(ch){
+			case 'Y':
+				ret = 1;
+				break;
+			case 'N':
+				ret = 0;
+				break;
+			default:
+				continue;
+		}
+
+		put_char(ch);
+
+		break;
+	}
+
+	new_line();
+	return ret;
+}
+
 // input - string
 
 int get_str(char *arg_place_to_store, int arg_size_place_to_store){
@@ -523,12 +553,17 @@ void main() {
 			char *vupros = pairs_vupros_otgovor[i];
 			char *otgovor = pairs_vupros_otgovor[i+1];
 
+			reset_screen();
+
 			put_bad_multiline_str(vupros);
 			new_line();
 
-			PUT_COMPTIME_STR("press key for answer");
-			get_sk_blk();
-			new_line();
+			PUT_COMPTIME_STR("show answer?");
+			char show_answer = get_yes_or_no();
+
+			if(!show_answer){
+				continue;
+			}
 
 			put_bad_multiline_str(otgovor);
 			new_line();
