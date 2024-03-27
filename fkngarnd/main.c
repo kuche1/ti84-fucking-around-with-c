@@ -58,7 +58,7 @@
 // display params
 #define SYMBOL_HEIGHT_PIXELS 5
 // different symbols have different width; we can change this if we make a wrapper around the put_char fnc that checks for the cursor x
-#define FATTEST_SYMBOL_WIDTH_PIXELS 4 // I actually don't know if this is the case; currently `Y` with 4 pixels
+#define FATTEST_SYMBOL_WIDTH_PIXELS 5 // `*` is 5 pixels wide, excluding the space pixel
 #define DISPLAY_HEIGHT_PIXELS 64 // indexed 0-63
 #define DISPLAY_WIDTH_PIXELS 96 // indexed 0-95
 
@@ -165,7 +165,7 @@ void move_cur_to_next_line(){
 	set_cur_x(0);
 }
 
-// screen clear
+// screen - clear
 
 void clear_screen() __naked{
 	__asm
@@ -188,12 +188,20 @@ void clear_screen() __naked{
 	__endasm;
 }
 
-// screen reset
+// screen - reset
 
 void reset_screen(){
 	clear_screen();
 	reset_cur();
 	put_char(ASCII_CURRENT_LINE_INDICATOR);
+}
+
+// screen - check if there is enough space
+
+// TODO I need to check what happens if we try to print a character that is too wide
+// since FATTEST_SYMBOL_WIDTH_PIXELS doesn't take into account the last space character
+char screen_check_x_if_enough_space_for_1_more_char(char cur_x){
+	return cur_x +1 + FATTEST_SYMBOL_WIDTH_PIXELS <= DISPLAY_WIDTH_PIXELS; // `+1` because `cur_x` is 0-indexed
 }
 
 // output - new line
@@ -253,19 +261,7 @@ void put_char(char ch) __naked{
 
 // output - string
 
-// if we want some more safety we can implement maxlen
-void put_str(char *str, int len){
-	if(len < 0){
-		PUT_COMPTIME_STR("<E1>");
-	}
-
-	char *end = str + len;
-
-	while(str != end){
-		put_char(*str++);
-	}
-}
-
+// outputs a regular C string that end with 0
 // this doesn't seem to be much faster than manually doing a loop in C
 void put_bad_str(char *str) __naked{
 	// kato vidq .asm i vijdam 4e argumenta se slaga v `hl`
@@ -280,6 +276,51 @@ void put_bad_str(char *str) __naked{
 
 		ret
 	__endasm;
+}
+
+// if we want some more safety we can implement maxlen
+void put_str(char *str, int len){
+	if(len < 0){
+		PUT_COMPTIME_STR("<E1>");
+	}
+
+	char *end = str + len;
+
+	while(str != end){
+		put_char(*str++);
+	}
+}
+
+// I hate this
+void put_bad_multiline_str(char *str){
+	for(;;){
+		char ch = *str++;
+		if(ch == 0){
+			break;
+		}
+
+		char cur_x = get_cur_x();
+		if(!screen_check_x_if_enough_space_for_1_more_char(cur_x)){
+			new_line();
+		}
+		put_char(ch);
+	}
+}
+
+void put_multiline_str(char *str, int len){
+	if(len < 0){
+		PUT_COMPTIME_STR("<E2>");
+	}
+
+	char *end = str + len;
+
+	while(str != end){
+		char cur_x = get_cur_x();
+		if(!screen_check_x_if_enough_space_for_1_more_char(cur_x)){
+			new_line();
+		}
+		put_char(*str++);
+	}
 }
 
 // output - debug
@@ -430,6 +471,10 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 
 		put_char(ch);
 
+		*storage++ = ch;
+		bytes_left -= 1;
+		bytes_written += 1;
+
 		char cur_x = get_cur_x();
 		// char cur_y = get_cur_y();
 
@@ -439,14 +484,10 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 		// set_cur_y(cur_y);
 		// set_cur_x(cur_x);
 
-		if(cur_x >= DISPLAY_WIDTH_PIXELS - FATTEST_SYMBOL_WIDTH_PIXELS - 1){ // we actually need to leave some headroom here because the cursor will not saturate or overflow when the end has been reched - instead it will stay the same
+		if(!screen_check_x_if_enough_space_for_1_more_char(cur_x)){
 			// no more space on screen
 			break;
 		}
-
-		*storage++ = ch;
-		bytes_left -= 1;
-		bytes_written += 1;
 	}
 
 	*storage = 0;
@@ -467,7 +508,18 @@ void main() {
 
 	for(char i=0; i<LENOF(pairs_vupros_otgovor); ++i){
 		char *str = pairs_vupros_otgovor[i];
-		put_bad_str(str);
+		put_bad_multiline_str(str);
+		new_line();
+	}
+
+	{
+		PUT_COMPTIME_STR("enter:");
+
+		char data[30];
+		int written = get_str(data, sizeof(data));
+
+		PUT_COMPTIME_STR("got:")
+		put_str(data, written);
 		new_line();
 	}
 
