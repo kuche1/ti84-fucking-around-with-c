@@ -37,7 +37,7 @@ NON_ASCII_TRANSLATE = {
     'ж': 'j',
     'з': 'z',
     'и': 'i',
-    'й': 0x9E, # note
+    'й': 'i', # 0x9E, # note
     'к': 'k',
     'л': 'l',
     'м': 'm',
@@ -61,7 +61,7 @@ NON_ASCII_TRANSLATE = {
 
     # cyrlic upper case
     'В': 'V',
-    'Й': 0x9D, # note
+    'Й': 'I', # 0x9D, # note
     'К': 'K',
     'П': 'P',
     'Т': 'T',

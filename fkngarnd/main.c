@@ -64,7 +64,7 @@
 #define DISPLAY_HEIGHT_PIXELS 64 // indexed 0-63
 #define DISPLAY_WIDTH_PIXELS 96 // indexed 0-95
 
-#define REPLACE_SPACE1PX_WITH_SPACE4PX 1 // 0 or 1; checks if we are to print the 1pixel space, and replaces it with the 4pixel space, for readability
+#define REPLACE_SPACE1PX_WITH_SPACE4PX 0 // TODO izhlejda kato tova e 0 i iz4ezvu buga kudeto put_multipile_str mi qde bukvite // 0 or 1; checks if we are to print the 1pixel space, and replaces it with the 4pixel space, for readability
 #define ASCII_SPACE_1PX ' '
 #define ASCII_SPACE_4PX 0x06
 #define ASCII_CURRENT_LINE_INDICATOR 0x05 // this needs to be at max 4px wide, so that we can clear it with a single 4px space
