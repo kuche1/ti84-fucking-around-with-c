@@ -65,7 +65,7 @@
 #define DISPLAY_WIDTH_PIXELS 96 // indexed 0-95
 
 // #define REPLACE_SPACE1PX_WITH_SPACE4PX 0 // TODO izhlejda kato tova e 0 i iz4ezvu buga kudeto put_multipile_str mi qde bukvite // 0 or 1; checks if we are to print the 1pixel space, and replaces it with the 4pixel space, for readability
-#define REPEAT_SPACE1PX 0 // how many times to repeat the space1px character when requested, as to increase readability; 1 mean repeat once, so it will be printed twice in total
+#define REPEAT_SPACE1PX 2 // how many times to repeat the space1px character when requested, as to increase readability; 1 mean repeat once, so it will be printed twice in total
 #define ASCII_SPACE_1PX ' '
 #define ASCII_SPACE_4PX 0x06
 #define ASCII_CURRENT_LINE_INDICATOR 0x05 // this needs to be at max 4px wide, so that we can clear it with a single 4px space
@@ -625,7 +625,7 @@ void main() {
 			put_multiline_str(otgovor, otgovor_len);
 			new_line();
 
-			PUT_COMPTIME_STR("pres key 4 next question");
+			PUT_COMPTIME_STR("PRES KEY 4 NEXT QUESTION");
 			get_sk_blk();
 			new_line();
 		}
@@ -642,8 +642,10 @@ void main() {
 	// 	new_line();
 	// }
 
+	new_line();
 	PUT_COMPTIME_STR("press any key to exit");
-	PUT_COMPTIME_STR("and totally clear RAM")
+	new_line();
+	PUT_COMPTIME_STR("and totally clear RAM");
 	get_sk_blk();
 
 	// it sucks that we have to do this, but the RAM gets corrupted for some reason
