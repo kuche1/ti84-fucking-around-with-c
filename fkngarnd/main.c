@@ -96,43 +96,6 @@ void printc(char ch) __naked{
 	__endasm;
 }
 
-// time
-
-// // https://wikiti.brandonw.net/index.php?title=83Plus:RAM:8478
-// char get_time_sec() __naked{
-// 	__asm
-
-// 		push af
-// 		push bc
-// 		push de
-// 		push hl
-// 		push ix
-
-// 		BCALL(_getTime)
-
-// 		BCALL(_PopRealO1)
-
-// 		// ld a, (#OP1)
-// 		// ld a, (#FPS)
-
-// 		ld hl, #OP1
-// 		inc hl
-// 		// inc hl
-// 		// inc hl
-// 		// inc hl
-// 		// dec hl
-// 		ld a, (hl)
-
-// 		pop ix
-// 		pop hl
-// 		pop de
-// 		pop bc
-// 		pop af
-
-// 		ret
-// 	__endasm;
-// }
-
 // cursor get
 
 char get_cur_y() __naked{
@@ -171,15 +134,6 @@ void reset_cur(){
 	set_cur_y(0);
 	set_cur_x(0);
 }
-
-// void reset_cur() __naked{
-// 	__asm
-// 		xor a, a
-// 		ld (#penRow), a
-// 		ld (#penCol), a
-// 		ret
-// 	__endasm;
-// }
 
 // cursor - move on next line
 
@@ -249,25 +203,7 @@ void new_line(){
 	put_char('>');
 }
 
-// output - hardcoded letters
-
-// void put_big_A() __naked{
-// 	__asm
-// 		ld a, #'A'
-// 		BCALL(_PutC)
-// 		ret
-// 	__endasm;
-// }
-
-// void put_small_A() __naked{
-// 	__asm
-// 		ld a, #'A'
-// 		BCALL(_VPutMap)
-// 		ret
-// 	__endasm;
-// }
-
-// output - any letter
+// output - char
 
 void put_char(char ch) __naked{
 	// this doesn't automatically go on the next line upon reaching end of current line
@@ -300,7 +236,7 @@ void put_char(char ch) __naked{
 	__endasm;
 }
 
-// output - any string
+// output - string
 
 // if we want some safety we can implement maxlen
 void put_str(char *str, int len){
@@ -314,22 +250,6 @@ void put_str(char *str, int len){
 		put_char(*str++);
 	}
 }
-
-// // tova mi se struva 4e ne e po-burzo ot C for versiqta
-// void put_str(char *str) __naked{
-// 	// kato vidq .asm i vijdam 4e argumenta se slaga v `hl`
-
-// 	__asm
-
-// 		push hl
-
-// 		BCALL(_VPutS) // in(HL); out(HL); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
-
-// 		pop hl;
-
-// 		ret
-// 	__endasm;
-// }
 
 // output - debug
 
@@ -505,20 +425,6 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 	return bytes_written;
 }
 
-// return test
-
-// char ret_test() {
-// 	return 'A';
-// }
-
-// it seems that the return value goes to `a`
-char ret_test() __naked{
-	__asm
-		ld a, #'A'
-		ret
-	__endasm;
-}
-
 // main
 
 void main() {
@@ -557,13 +463,6 @@ void main() {
 	// 	put_char('a');
 	// }
 	// new_line();
-
-	PUT_COMPTIME_STR("return test");
-	new_line();
-	char ret_value = ret_test();
-	PUT_COMPTIME_STR("asd value: ");
-	put_char(ret_value);
-	new_line();
 
 	{
 		PUT_COMPTIME_STR("inp:");
