@@ -612,7 +612,7 @@ void main() {
 	// 	PUT_COMPTIME_STR("enter:");
 
 	// 	char data[30];
-	// 	int written = get_str(data, sizeof(data));
+	// 	int written = GET_STR(data);
 
 	// 	PUT_COMPTIME_STR("got:")
 	// 	put_str(data, written);
