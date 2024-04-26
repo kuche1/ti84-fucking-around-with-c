@@ -51,6 +51,8 @@
 
 // if we are to signify a runtime error we do it by printing `<EN>`, where `N` is replaced by a unique number (so that there isn't one `N` used for multiple errors found on multiple lines in the source code)
 
+// if you see `charnum` that means a number, represented by the `char` type
+
 //// TODO
 
 // perhaps we should dedicate the top line for error codes, battery, and memory
@@ -105,7 +107,7 @@
 
 char get_sk_blk();
 void put_char(char ch);
-void put_char_as_num(char ch);
+void put_charnum(char ch);
 void put_str(char *str, int len);
 
 // magic - don't remove this or the code stops working; I don't know why
@@ -407,20 +409,20 @@ void put_multiline_str(char *str, int len){
 // output - char as int
 
 // we can use `_DispHL` instead - https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
-void put_char_as_num(char ch){
+void put_charnum(char ch){
 	// doing recursion on cuch a shitty hardware is risky... I'll use something else if I ever crash
 
 	// this will never happen since char in an unsigned type
 	// if(ch < 0){
 	// 	put_char('-');
-	// 	return put_char_as_num(ch*-1);
+	// 	return put_charnum(ch*-1);
 	// }
 
 	char last_digit = ch % 10;
 	ch /= 10;
 
 	if(ch > 0){
-		put_char_as_num(ch);
+		put_charnum(ch);
 	}
 
 	char to_put = '0' + last_digit;
@@ -520,7 +522,7 @@ char get_char_blk(){
 	}
 
 	PUT_COMPTIME_STR("<chr");
-	put_char_as_num(ch);
+	put_charnum(ch);
 	put_char('>');
 	
 	return ASCII_UNKNOWN_CHARACTER;
@@ -636,7 +638,7 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 
 		// set_cur_y(0);
 		// clear_line();
-		// put_char_as_num(cur_x);
+		// put_charnum(cur_x);
 		// set_cur_y(cur_y);
 		// set_cur_x(cur_x);
 
@@ -653,14 +655,14 @@ int get_str(char *arg_place_to_store, int arg_size_place_to_store){
 	return bytes_written;
 }
 
-// main
+// input - choose an item from array of strings
 
-char choice(char **items, char len_items){
+char inp_choice(char **items, char len_items){
 	PUT_COMPTIME_STR("Make a choice:");
 	new_line();
 
 	for(char i=0; i<len_items; ++i){
-		put_char_as_num(i);
+		put_charnum(i);
 		PUT_COMPTIME_STR(": ");
 
 		char *item = items[i];
@@ -680,6 +682,8 @@ char choice(char **items, char len_items){
 
 }
 
+// main
+
 void main() {
 	reset_screen();
 
@@ -690,11 +694,12 @@ void main() {
 			"asd1",
 			"asdasdsad2",
 		};
-		ch = choice(choices, LENOF(choices));
+		ch = inp_choice(choices, LENOF(choices));
 	}
 
 	PUT_COMPTIME_STR("choice was: ");
-	put_char_as_num(ch);
+	put_charnum(ch);
+	new_line();
 
 	new_line();
 	PUT_COMPTIME_STR("press any key to exit");
