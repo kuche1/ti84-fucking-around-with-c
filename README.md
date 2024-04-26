@@ -1,4 +1,12 @@
 
+# Arch
+
+`sudo pacman -S sdcc`
+
+`paru rabbitsign`
+
+`paru tilp` TODO this doesnt work
+
 # Ubuntu
 
 `sudo apt install sdcc tilp2`
