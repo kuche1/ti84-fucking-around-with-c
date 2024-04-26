@@ -9,9 +9,7 @@
 
 # Ubuntu
 
-`sudo apt install sdcc tilp2`
+`sudo apt install tilp2`
 
-you also need `rabbitsign`, but the stock package seems to not work quite right\
-as a workaround you can use an arch distrobox and export arch's rabbitsgn
-
-this resulting executable doesn't work quite right tho
+ubuntu's `rabbitsign` and `sdcc` (`sdasz80`) don't quite work, so it's better to\
+use arch on distrobox and export those 2
