@@ -1,2 +1,4 @@
 
-sudo apt install sdcc rabbitsign
+sudo apt install sdcc
+
+# you also need `rabbitsign`, but the stock package seems to not work quite right
