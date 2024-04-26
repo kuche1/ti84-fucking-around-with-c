@@ -329,7 +329,6 @@ void put_char_nowrapper(char ch) __naked{
 	__endasm;
 }
 
-// returns 1 if the character was a new line
 void put_char(char ch){
 
 #if REPEAT_SPACE1PX
