@@ -561,6 +561,14 @@ char get_yes_or_no(){
 	return ret;
 }
 
+// input - charnum
+
+char get_charnum_noprint(){
+	char ch = get_char_blk();
+	ch -= '0'; // TODO this kinds sucks
+	return ch;
+}
+
 // input - string
 
 int get_str(char *arg_place_to_store, int arg_size_place_to_store){
@@ -660,19 +668,33 @@ char choice(char **items, char len_items){
 		new_line();
 	}
 
-	return 0;
+	for(;;){
+		char ch = get_charnum_noprint();
+
+		// char is unsigned, so it's impossible to be less than 0
+
+		if(ch < len_items){
+			return ch;
+		}
+	}
+
 }
 
 void main() {
 	reset_screen();
+
+	char ch;
 
 	{
 		char *choices[] = {
 			"asd1",
 			"asdasdsad2",
 		};
-		choice(choices, LENOF(choices));
+		ch = choice(choices, LENOF(choices));
 	}
+
+	PUT_COMPTIME_STR("choice was: ");
+	put_char_as_num(ch);
 
 	new_line();
 	PUT_COMPTIME_STR("press any key to exit");
