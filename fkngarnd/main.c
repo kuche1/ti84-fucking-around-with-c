@@ -88,20 +88,18 @@
 
 // macro functions
 
-#define LENOF(var) \
-	sizeof(var) / sizeof(*var)
-
-#define BCALL(__LABEL__) \
+#define ASM_BCALL(__LABEL__) \
     rst 40 \
     .dw __LABEL__
 
+#define LENOF(var) \
+	(sizeof(var) / sizeof(*var))
+
 #define GET_STR(storage) \
-	get_str(storage, sizeof(storage))
+	get_str(storage, sizeof(storage));
 
 #define PUT_COMPTIME_STR(str) \
-	{ \
-		put_str(str, LENOF(str)-1); /* `-1` as to discard the last 0 */ \
-	}
+	put_str(str, LENOF(str)-1); /* `-1` as to discard the last 0 */
 
 // prototypes
 
@@ -120,7 +118,7 @@ void printc(char ch) __naked{
 		push hl 
 		ld a, c
 		push ix // kogato zakomentiram tova i suotvetniq pop printeneto na novi redove spira da raboti
-		BCALL(_VPutMap)
+		ASM_BCALL(_VPutMap)
 		pop ix
 		ret
 	__endasm;
@@ -130,7 +128,7 @@ void printc(char ch) __naked{
 
 char total_ram_reset() __naked{
 	__asm
-		BCALL(_resetRam)
+		ASM_BCALL(_resetRam)
 		ret // we don't really need this, but I'll keep in just in case I call the wrong bcall on the line up above
 	__endasm;
 }
@@ -147,7 +145,7 @@ char get_battery_level() __naked{
 		push hl
 		push ix
 
-		BCALL(_Chk_Batt_Level) // out(a); trash(all); https://wikiti.brandonw.net/index.php?title=83Plus:BCALLs:5221
+		ASM_BCALL(_Chk_Batt_Level) // out(a); trash(all); https://wikiti.brandonw.net/index.php?title=83Plus:BCALLs:5221
 
 		pop ix
 		pop hl
@@ -167,7 +165,7 @@ int get_free_ram_bytes() __naked{
 		push bc
 		push hl
 
-		BCALL(_MemChk) // out(hl); trash(bc, hl); https://wikiti.brandonw.net/index.php?title=83Plus:BCALLs:42E5
+		ASM_BCALL(_MemChk) // out(hl); trash(bc, hl); https://wikiti.brandonw.net/index.php?title=83Plus:BCALLs:42E5
 
 		// since we're returning an int (2bytes), `de` is the register that we have to put the result in
 		ld d, h
@@ -246,7 +244,7 @@ void clear_screen() __naked{
 		push hl
 		push ix
 
-		BCALL(_ClrScrnFull) // trash(all); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
+		ASM_BCALL(_ClrScrnFull) // trash(all); https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
 
 		pop ix
 		pop hl
@@ -318,7 +316,7 @@ void put_char_nowrapper(char ch) __naked{
 		// add hl, sp
 		// // ld e, (hl) // tova raboti
 		// ld a, (hl) // tova ne raboti
-		BCALL(_VPutMap) // in(A) trash(all but BC and HL) // https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
+		ASM_BCALL(_VPutMap) // in(A) trash(all but BC and HL) // https://taricorp.gitlab.io/83pa28d/lesson/week2/day11/index.html
 
 		pop ix
 		pop hl
@@ -463,7 +461,7 @@ char get_sk_blk() __naked{
 		push de
 		push hl
 
-		BCALL(_getkey) // in(a); trash(bc, de, hl); https://taricorp.gitlab.io/83pa28d/lesson/week2/day12/index.html
+		ASM_BCALL(_getkey) // in(a); trash(bc, de, hl); https://taricorp.gitlab.io/83pa28d/lesson/week2/day12/index.html
 
 		pop hl
 		pop de
