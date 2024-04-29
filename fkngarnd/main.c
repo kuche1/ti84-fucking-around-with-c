@@ -235,7 +235,8 @@ void move_cur_to_next_line(){
 
 // screen - clear
 
-void clear_screen() __naked{
+// make the name awkward to make sure that no one calls it by accident
+void clear_screen_nowrapper() __naked{
 	__asm
 
 		push af
@@ -259,7 +260,7 @@ void clear_screen() __naked{
 // screen - reset
 
 void reset_screen(){
-	clear_screen();
+	clear_screen_nowrapper();
 	reset_cur();
 	put_char(ASCII_CURRENT_LINE_INDICATOR);
 }
